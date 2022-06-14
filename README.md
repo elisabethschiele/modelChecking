@@ -1,5 +1,5 @@
 # modelChecking
-Implementation for Practical course: Redent advances in model checking
+Implementation for Practical course: Recent advances in model checking
 
 ## Prior installation required
 ### Momba (from momba repo)
