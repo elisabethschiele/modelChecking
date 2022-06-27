@@ -62,11 +62,7 @@ class LeafNode(TreeNode):
     def get_qs(self, state):
         return self.qs
 
-    def select_child(self, state):
-        if state[self.feature] < self.value:
-            return self.left_child, self.right_child
-        else:
-            return self.right_child, self.left_child
+
 
 class Inner_Node(TreeNode):
     #"branching node" in the paper
@@ -81,3 +77,9 @@ class Inner_Node(TreeNode):
     def get_qs(self, s):
         # returns Q values of the corresponding child
         return self.select_child(s)[0].get_qs(s)
+
+    def select_child(self, state):
+        if state[self.feature] < self.value:
+            return self.left_child, self.right_child
+        else:
+            return self.right_child, self.left_child
