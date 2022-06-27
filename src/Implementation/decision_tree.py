@@ -1,5 +1,8 @@
 from abc import abstractmethod
 
+import numpy as np
+
+
 class DecisionTree:
     def __init__(self):
 
@@ -8,8 +11,8 @@ class DecisionTree:
         self.root = LeafNode(splits)
 
     def select_action(self, state):
-        #Algorithm 2
-        pass
+        #select action with the largest Q value
+        return np.argmax(self.root.get_qs(state))
 
 
 
@@ -29,8 +32,10 @@ class TreeNode:
 
 class LeafNode(TreeNode):
 
-    def __init__(self, splits):
+    def __init__(self, qs, feature, splits):
+        self.qs = qs
         self.v = 0
+        self.feature = feature
         self.splits = []
         self.splits = splits
 
@@ -54,6 +59,15 @@ class LeafNode(TreeNode):
         #Algorithm 7
         pass
 
+    def get_qs(self, state):
+        return self.qs
+
+    def select_child(self, state):
+        if state[self.feature] < self.value:
+            return self.left_child, self.right_child
+        else:
+            return self.right_child, self.left_child
+
 class Inner_Node(TreeNode):
     #"branching node" in the paper
 
@@ -63,3 +77,7 @@ class Inner_Node(TreeNode):
         self.left_child = left_child
         self.right_child = right_child
         self.visits = visits
+
+    def get_qs(self, s):
+        # returns Q values of the corresponding child
+        return self.select_child(s)[0].get_qs(s)
