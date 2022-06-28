@@ -21,7 +21,7 @@ def get_initial_state(model_path):
     return initial_state
 
 def CQI(model_path,
-        epsilon,              # determines amount of randomness in Algorithm 2
+        epsilon = 0.5,        # determines amount of randomness in Algorithm 2
         H_s = 0.99,           # starting threshold for what potential delta_Q is required to trigger a split
         D = 0.99,             # decay for H_s
         gamma = 0.99,         # const for the Bellman equation
@@ -30,15 +30,18 @@ def CQI(model_path,
         num_of_episodes=10):
 
     initial_state = get_initial_state(model_path)
-    tree = decision_tree.DecisionTree()
+    lows = None   # array of the lowest values of model variables
+    highs = None  # array of the highest values of model variables
+    total_actions = None  # total number of actions in the model
+
+    tree = decision_tree.DecisionTree(initial_state, lows, highs, total_actions)
 
     current_state = initial_state
 
 
-
     for i in range(num_of_episodes):
         #Algorithm 1
-        take_action(current_state, epsilon, q_s)
+        take_action(current_state, epsilon, tree)
 
         #update_tree()
 
@@ -46,7 +49,7 @@ def CQI(model_path,
 
     return None
 
-def take_action(tree, current_state, epsilon, q_s):
+def take_action(current_state, epsilon, tree):
     action = None
     if np.random.random() < epsilon:
         action = random.choice(current_state.transitions)
@@ -56,3 +59,8 @@ def take_action(tree, current_state, epsilon, q_s):
     #reward =
     next_state = action.destinations.pick().state
     #return action, reward, next_state
+
+# CQI("../Testing/models/resource-gathering.v2.jani")
+#CQI("../Testing/models/die.jani")
+CQI("../Testing/models/firewire.true.jani")
+

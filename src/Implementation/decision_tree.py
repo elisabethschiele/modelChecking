@@ -4,43 +4,70 @@ import numpy as np
 
 
 class DecisionTree:
-    def __init__(self):
+    def __init__(self, initial_state, lows, highs, total_actions):
 
-        splits = [] #TODO: generate all possible splits by looking
-                    # at the lowest and highest values at state space
-        self.root = LeafNode(splits)
+        self.initial_state = initial_state
+        self.lows = lows
+        self.highs = highs
+        self.total_actions = total_actions
+
+        splits = self.generate_splits(lows, highs, total_actions)
+        self.root = LeafNode(np.zeros(total_actions), 1, splits)
 
     def select_action(self, state):
         #select action with the largest Q value
         return np.argmax(self.root.get_qs(state))
 
+    def generate_splits(self, lows, highs, total_actions):
+        splits = []
+        for f in range(len(lows)):
+            for i in range(2):
+                splits.append(Split(f,
+                                    lows[f] + (highs[f] - lows[f]) / 3 * (i + 1),
+                                    np.zeros(total_actions),
+                                    np.zeros(total_actions),
+                                    0.5,
+                                    0.5))
+        return splits
+
+class Split():
+    def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
+        self.feature = feature
+        self.value = value
+        self.left_qs = left_qs
+        self.right_qs = right_qs
+        self.left_visits = left_visits
+        self.right_visits = right_visits
+
 
 
 class TreeNode:
+    #abstract class which might be deleted later
     @abstractmethod
-    def __init__(self, visit_decay):
+    def __init__(self, visits):
+        self.visits = visits
         pass
 
     @abstractmethod
     def is_leaf(self):
         pass
 
-    def select_action(self, state):
-        #selects action with highest expected Q value
+    @abstractmethod
+    def get_qs(self, state):
         pass
-
 
 class LeafNode(TreeNode):
 
-    def __init__(self, qs, feature, splits):
+    def __init__(self, qs, visits, splits):
         self.qs = qs
-        self.v = 0
-        self.feature = feature
-        self.splits = []
+        self.visits = visits
         self.splits = splits
 
     def is_leaf(self):
         return True
+
+    def get_qs(self, state):
+        return self.qs
 
     def update_leaf_q_values(self):
         #Algorithm 3
@@ -59,8 +86,7 @@ class LeafNode(TreeNode):
         #Algorithm 7
         pass
 
-    def get_qs(self, state):
-        return self.qs
+
 
 
 
@@ -74,11 +100,15 @@ class Inner_Node(TreeNode):
         self.right_child = right_child
         self.visits = visits
 
+    def is_leaf(self):
+        return False
+
     def get_qs(self, s):
         # returns Q values of the corresponding child
         return self.select_child(s)[0].get_qs(s)
 
     def select_child(self, state):
+        # selects the child that corresponds to the state
         if state[self.feature] < self.value:
             return self.left_child, self.right_child
         else:
