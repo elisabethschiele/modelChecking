@@ -62,8 +62,11 @@ def take_action(current_state, epsilon, tree):
     #return action, reward, next_state
 
 #CQI("../Testing/models/resource-gathering.v2.jani")
-CQI("../Testing/models/resource-gathering.v2_2.jani")
+#CQI("../Testing/models/resource-gathering.v2_2.jani")
 # CQI("../Testing/models/pacman.v1.jani")
 #CQI("../Testing/models/die.jani")
 #CQI("../Testing/models/firewire.true.jani")
+
+CQI("../Testing/models/resource-gathering-manual.v2.jani")
+
 
