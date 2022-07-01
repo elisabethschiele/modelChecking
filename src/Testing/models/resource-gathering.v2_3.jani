@@ -2272,7 +2272,7 @@
         },
         {
             "initial-value": "GEM_TO_COLLECT",
-            "name": "required_gem",`
+            "name": "required_gem",
             "type": {
                 "base": "int",
                 "kind": "bounded",
