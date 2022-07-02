@@ -2,7 +2,7 @@ import random
 
 import numpy as np
 from momba import engine, jani
-import gym
+#import gym
 import pathlib
 import decision_tree
 
@@ -67,6 +67,6 @@ def take_action(current_state, epsilon, tree):
 #CQI("../Testing/models/die.jani")
 #CQI("../Testing/models/firewire.true.jani")
 
-CQI("../Testing/models/resource-gathering-manual.v2.jani")
+CQI("../Testing/models/resource-gathering-manual2.v2.jani")
 
 
