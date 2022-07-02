@@ -768,10 +768,18 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "right_of_home",
-                                                "op": "call"
-                                            },
+                "left": {
+                    "left": "x",
+                    "op": "=",
+                    "right": 4
+                },
+                "op": "∧",
+                "right": {
+                    "left": "y",
+                    "op": "=",
+                    "right": 1
+                }
+            },
                                             "op": "∧",
                                             "right": "gold"
                                         },
@@ -786,10 +794,18 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "right_of_home",
-                                                "op": "call"
-                                            },
+                "left": {
+                    "left": "x",
+                    "op": "=",
+                    "right": 4
+                },
+                "op": "∧",
+                "right": {
+                    "left": "y",
+                    "op": "=",
+                    "right": 1
+                }
+            },
                                             "op": "∧",
                                             "right": "gem"
                                         },
@@ -1714,10 +1730,18 @@
                                                 "else": 0,
                                                 "if": {
                                                     "left": {
-                                                        "args": [],
-                                                        "function": "right_of_home",
-                                                        "op": "call"
-                                                    },
+                "left": {
+                    "left": "x",
+                    "op": "=",
+                    "right": 4
+                },
+                "op": "∧",
+                "right": {
+                    "left": "y",
+                    "op": "=",
+                    "right": 1
+                }
+            },
                                                     "op": "∧",
                                                     "right": "gold"
                                                 },
@@ -1888,10 +1912,18 @@
                                                 "else": 0,
                                                 "if": {
                                                     "left": {
-                                                        "args": [],
-                                                        "function": "right_of_home",
-                                                        "op": "call"
-                                                    },
+                "left": {
+                    "left": "x",
+                    "op": "=",
+                    "right": 4
+                },
+                "op": "∧",
+                "right": {
+                    "left": "y",
+                    "op": "=",
+                    "right": 1
+                }
+            },
                                                     "op": "∧",
                                                     "right": "gem"
                                                 },

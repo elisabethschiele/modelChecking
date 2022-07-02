@@ -67,7 +67,7 @@ def take_action(current_state, epsilon, tree):
 #CQI("../Testing/models/die.jani")
 #CQI("../Testing/models/firewire.true.jani")
 
-#CQI("../Testing/models/resource-negations-not-changed.jani")
-CQI("../testing/models/resource-negations-in-expression.jani")
+CQI("../Testing/models/resource-negations-not-changed.jani")
+#CQI("../testing/models/resource-negations-in-expression.jani")
 
 
