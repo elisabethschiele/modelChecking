@@ -16,10 +16,18 @@ def get_initial_state(model_path):
             "deadline": 200,
         }
     )
-    # # initial_states = explorer.initial_states
-    # # (initial_state,) = initial_states
-    # return initial_state
-    return None
+
+    print(network.ctx.global_scope.variable_declarations)
+    for var in network.ctx.global_scope.variable_declarations:
+        print(var.typ)
+        # if var.typ ==
+
+
+
+    initial_states = explorer.initial_states
+    (initial_state,) = initial_states
+    return initial_state
+
 
 def CQI(model_path,
         epsilon = 0.5,        # determines amount of randomness in Algorithm 2
@@ -31,6 +39,9 @@ def CQI(model_path,
         num_of_episodes=10):
 
     initial_state = get_initial_state(model_path)
+    # print(initial_state.global_env)
+    # for pair in initial_state.global_env:
+    #     print(pair)
     # lows = None   # array of the lowest values of model variables
     # highs = None  # array of the highest values of model variables
     # total_actions = None  # total number of actions in the model
@@ -67,7 +78,8 @@ def take_action(current_state, epsilon, tree):
 #CQI("../Testing/models/die.jani")
 #CQI("../Testing/models/firewire.true.jani")
 
-CQI("../Testing/models/resource-negations-not-changed.jani")
-#CQI("../testing/models/resource-negations-in-expression.jani")
+# CQI("../Testing/models/resource-negations-not-changed.jani")
+# CQI("../testing/models/resource-negations-in-expression.jani")
+CQI("../testing/models/resource-working-model.jani")
 
 

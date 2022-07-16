@@ -29,12 +29,17 @@
                                             "left": "gold",
                                             "op": "∧",
                                             "right": {
-                                                "exp": {
-                                                    "args": [],
-                                                    "function": "above_of_home",
-                                                    "op": "call"
-                                                },
-                                                "op": "¬"
+                                                "left": {
+                                                    "left": "x",
+                                                        "op": "=",
+                                                        "right": 3
+                                                    },
+                                                    "op": "∧",
+                                                    "right": {
+                                                        "left": "y",
+                                                        "op": "=",
+                                                        "right": 2
+                                                    }
                                             }
                                         },
                                         "op": "∨",
