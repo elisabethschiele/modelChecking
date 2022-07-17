@@ -19,6 +19,7 @@ class DecisionTree:
         return np.argmax(self.root.get_qs(state))
 
     def generate_splits(self, lows, highs, total_actions):
+        # generate two splits per feature: one at 1/3 distance between min and max and one at 2/3
         splits = []
         for f in range(len(lows)):
             for i in range(2):
@@ -32,7 +33,7 @@ class DecisionTree:
 
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
-        self.feature = feature
+        self.feature = feature # index of state variable
         self.value = value
         self.left_qs = left_qs
         self.right_qs = right_qs
@@ -54,6 +55,10 @@ class TreeNode:
 
     @abstractmethod
     def get_qs(self, state):
+        pass
+
+    @abstractmethod
+    def get_leaf(self, state):
         pass
 
 class LeafNode(TreeNode):
@@ -86,6 +91,9 @@ class LeafNode(TreeNode):
         #Algorithm 7
         pass
 
+    def get_leaf(self, state):
+        return self
+
 
 
 
@@ -113,3 +121,6 @@ class Inner_Node(TreeNode):
             return self.left_child, self.right_child
         else:
             return self.right_child, self.left_child
+
+    def get_leaf(self, state):
+        return self.select_child(state)[0].get_leaf(state)
