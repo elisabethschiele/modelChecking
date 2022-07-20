@@ -46,10 +46,13 @@ def CQI(model_path,
     # High = 1 = True
     lows = [1, 1, 0, 0, 0, 0, 0]   # array of the lowest values of model variables
     highs = [5, 5, 1, 1, 1, 1, 1]  # array of the highest values of model variables
-    total_actions = 4  # total number of actions in the model
-    
+    # total_actions = 4  # total number of actions in the model
+    action_names = ["left", "right", "top", "down"] # all actions
+    #TODO: (optional) function that returns all actions present in the model
+    # for action in initial_state.transitions:
+    #     action_names.append(action.action.action_type.label)
 
-    tree = decision_tree.DecisionTree(initial_state, lows, highs, total_actions)
+    tree = decision_tree.DecisionTree(initial_state, lows, highs, action_names)
     current_state = initial_state
     next_state = initial_state
 
@@ -79,12 +82,18 @@ def CQI(model_path,
     
 def take_action(current_state, epsilon, tree):
     action = None
+    for action in current_state.transitions:
+        print(action.action.action_type.label)
     if np.random.random() < epsilon:
         action = random.choice(current_state.transitions)
     else:
-        action = tree.select_action(current_state)
-        pass
-    return action
+        # select based on largest Q-Value
+        action_label = tree.select_action(current_state)
+        action = find_action_by_label(current_state, action_label)
+    print("selected action: "+action.action.action_type.label)
+    next_state = action.destinations.pick().state
+    
+    return action, next_state
 
 def get_value(state, variable_name):
     # returns integer value of variable_name
@@ -102,6 +111,12 @@ def get_value(state, variable_name):
 def episode_done(state):
     # episode is done as soon as no more gold or gems are required
     return get_value(state, "required_gold") == 0 and get_value(state, "required_gold") == 0
+
+def find_action_by_label(state, label):
+    for action in state.transitions:
+        if action.action.action_type.label == label:
+            return action
+    print ("No action found mathing label "+label)
 
 
 CQI("../testing/models/resource-working-model.jani")

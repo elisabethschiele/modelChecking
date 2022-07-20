@@ -1,32 +1,38 @@
+import operator
 from abc import abstractmethod
 
 import numpy as np
 
 
 class DecisionTree:
-    def __init__(self, initial_state, lows, highs, total_actions):
+    def __init__(self, initial_state, lows, highs, action_names):
 
         self.initial_state = initial_state
         self.lows = lows
         self.highs = highs
-        self.total_actions = total_actions
+        self.action_names = action_names
 
-        splits = self.generate_splits(lows, highs, total_actions)
+        splits = self.generate_splits(lows, highs, len(action_names))
         for split in splits:
             print(str(split))
-        self.root = LeafNode(np.zeros(total_actions), 1, splits)
+
+        actions_qs = {} # mapping of actions to Q-values
+        for action in action_names:
+            actions_qs[action] = 0
+        self.root = LeafNode(actions_qs, 1, splits)
 
     def select_action(self, state):
         #select action with the largest Q value
-        return np.argmax(self.root.get_qs(state))
+        return max(self.root.get_qs(state).items(), key=operator.itemgetter(1))[0]
+        # return np.argmax(self.root.get_qs(state))
 
     def generate_splits(self, lows, highs, total_actions):
         # generate two splits per feature: one at 1/3 distance between min and max and one at 2/3
         splits = []
         for f in range(len(lows)):
-            for i in range(2):
+            for i in range(1):
                 splits.append(Split(f,
-                                    lows[f] + (highs[f] - lows[f]) / 3 * (i + 1),
+                                    lows[f] + (highs[f] - lows[f]) / 2 * (i + 1),
                                     np.zeros(total_actions),
                                     np.zeros(total_actions),
                                     0.5,
@@ -68,8 +74,8 @@ class TreeNode:
 
 class LeafNode(TreeNode):
 
-    def __init__(self, qs, visits, splits):
-        self.qs = qs
+    def __init__(self, actions_qs, visits, splits):
+        self.actions_qs = actions_qs
         self.visits = visits
         self.splits = splits
 
@@ -77,7 +83,7 @@ class LeafNode(TreeNode):
         return True
 
     def get_qs(self, state):
-        return self.qs
+        return self.actions_qs
 
     def update_leaf_q_values(self):
         #Algorithm 3
