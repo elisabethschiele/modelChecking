@@ -12,6 +12,8 @@ class DecisionTree:
         self.total_actions = total_actions
 
         splits = self.generate_splits(lows, highs, total_actions)
+        for split in splits:
+            print(str(split))
         self.root = LeafNode(np.zeros(total_actions), 1, splits)
 
     def select_action(self, state):
@@ -39,6 +41,9 @@ class Split():
         self.right_qs = right_qs
         self.left_visits = left_visits
         self.right_visits = right_visits
+
+    def __str__(self):
+        return f"feature: {self.feature}, value: {self.value}, left_qs: {self.left_qs}, right_qs: {self.right_qs}, left_visits: {self.left_visits}, right_visits {self.right_visits}"
 
 
 

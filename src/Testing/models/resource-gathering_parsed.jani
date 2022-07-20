@@ -30,19 +30,25 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "above_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
-                                        "right": {
-                                            "args": [],
-                                            "function": "above_of_gold",
-                                            "op": "call"
-                                        }
+"right": false
                                     }
                                 },
                                 {
@@ -54,18 +60,38 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "above_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "above_of_gem",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 5
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 5
+    }
+
                                         }
                                     }
                                 },
@@ -90,9 +116,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "above_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gold"
@@ -108,9 +144,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "above_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gem"
@@ -128,9 +174,19 @@
                         "exp": {
                             "left": {
                                 "exp": {
-                                    "args": [],
-                                    "function": "above_of_enemy",
-                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 5
+    }
+
                                 },
                                 "op": "¬"
                             },
@@ -181,9 +237,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "above_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gold"
@@ -199,9 +265,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "above_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gem"
@@ -232,19 +308,25 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "above_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
-                                        "right": {
-                                            "args": [],
-                                            "function": "above_of_gold",
-                                            "op": "call"
-                                        }
+"right": false
                                     }
                                 },
                                 {
@@ -256,18 +338,38 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "above_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "above_of_gem",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 5
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 5
+    }
+
                                         }
                                     }
                                 },
@@ -292,9 +394,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "above_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gold"
@@ -310,9 +422,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "above_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gem"
@@ -341,9 +463,19 @@
                         "comment": "(above_of_enemy & (y > 1))",
                         "exp": {
                             "left": {
-                                "args": [],
-                                "function": "above_of_enemy",
-                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 5
+    }
+
                             },
                             "op": "∧",
                             "right": {
@@ -392,9 +524,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "right_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gold"
@@ -410,9 +552,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "right_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gem"
@@ -443,18 +595,38 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "right_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "right_of_gold",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 5
+    }
+
                                         }
                                     }
                                 },
@@ -467,19 +639,25 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "right_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
-                                        "right": {
-                                            "args": [],
-                                            "function": "right_of_gem",
-                                            "op": "call"
-                                        }
+"right": false
                                     }
                                 },
                                 {
@@ -503,9 +681,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "right_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gold"
@@ -521,9 +709,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "right_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gem"
@@ -552,9 +750,35 @@
                         "comment": "(right_of_enemy & (x > 1))",
                         "exp": {
                             "left": {
-                                "args": [],
-                                "function": "right_of_enemy",
-                                "op": "call"
+
+    "left": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 5
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 5
+        }
+    },
+    "op": "∨",
+    "right": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 4
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 4
+        }
+    }
+
                             },
                             "op": "∧",
                             "right": {
@@ -580,18 +804,38 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "right_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "right_of_gold",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 5
+    }
+
                                         }
                                     }
                                 },
@@ -604,19 +848,25 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "right_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
-                                        "right": {
-                                            "args": [],
-                                            "function": "right_of_gem",
-                                            "op": "call"
-                                        }
+"right": false
                                     }
                                 },
                                 {
@@ -640,9 +890,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "right_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gold"
@@ -658,9 +918,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "right_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gem"
@@ -678,9 +948,35 @@
                         "exp": {
                             "left": {
                                 "exp": {
-                                    "args": [],
-                                    "function": "right_of_enemy",
-                                    "op": "call"
+
+    "left": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 5
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 5
+        }
+    },
+    "op": "∨",
+    "right": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 4
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 4
+        }
+    }
+
                                 },
                                 "op": "¬"
                             },
@@ -708,18 +1004,38 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "left_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "left_of_gold",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 5
+    }
+
                                         }
                                     }
                                 },
@@ -732,18 +1048,38 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "left_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "left_of_gem",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 4
+    }
+
                                         }
                                     }
                                 },
@@ -768,9 +1104,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "left_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gold"
@@ -786,9 +1132,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "left_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gem"
@@ -806,9 +1162,35 @@
                         "exp": {
                             "left": {
                                 "exp": {
-                                    "args": [],
-                                    "function": "left_of_enemy",
-                                    "op": "call"
+
+    "left": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 3
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 5
+        }
+    },
+    "op": "∨",
+    "right": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 2
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 4
+        }
+    }
+
                                 },
                                 "op": "¬"
                             },
@@ -859,9 +1241,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "left_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gold"
@@ -877,9 +1269,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "left_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gem"
@@ -910,18 +1312,38 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "left_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "left_of_gold",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 5
+    }
+
                                         }
                                     }
                                 },
@@ -934,18 +1356,38 @@
                                             "op": "∧",
                                             "right": {
                                                 "exp": {
-                                                    "args": [],
-                                                    "function": "left_of_home",
-                                                    "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                 },
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "left_of_gem",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 4
+    }
+
                                         }
                                     }
                                 },
@@ -970,9 +1412,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "left_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gold"
@@ -988,9 +1440,19 @@
                                         "else": 0.0,
                                         "if": {
                                             "left": {
-                                                "args": [],
-                                                "function": "left_of_home",
-                                                "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                             },
                                             "op": "∧",
                                             "right": "gem"
@@ -1019,9 +1481,35 @@
                         "comment": "(left_of_enemy & (x < 5))",
                         "exp": {
                             "left": {
-                                "args": [],
-                                "function": "left_of_enemy",
-                                "op": "call"
+
+    "left": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 3
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 5
+        }
+    },
+    "op": "∨",
+    "right": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 2
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 4
+        }
+    }
+
                             },
                             "op": "∧",
                             "right": {
@@ -1046,19 +1534,25 @@
                                             "left": "gold",
                                             "op": "∧",
                                             "right": {
-                                                "exp": {
-                                                    "args": [],
-                                                    "function": "below_of_home",
-                                                    "op": "call"
-                                                },
+"exp": false,
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "below_of_gold",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 4
+    }
+
                                         }
                                     }
                                 },
@@ -1070,19 +1564,25 @@
                                             "left": "gem",
                                             "op": "∧",
                                             "right": {
-                                                "exp": {
-                                                    "args": [],
-                                                    "function": "below_of_home",
-                                                    "op": "call"
-                                                },
+"exp": false,
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "below_of_gem",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 5
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 3
+    }
+
                                         }
                                     }
                                 },
@@ -1106,11 +1606,7 @@
                                     "value": {
                                         "else": 0.0,
                                         "if": {
-                                            "left": {
-                                                "args": [],
-                                                "function": "below_of_home",
-                                                "op": "call"
-                                            },
+"left": false,
                                             "op": "∧",
                                             "right": "gold"
                                         },
@@ -1124,11 +1620,7 @@
                                     "value": {
                                         "else": 0.0,
                                         "if": {
-                                            "left": {
-                                                "args": [],
-                                                "function": "below_of_home",
-                                                "op": "call"
-                                            },
+"left": false,
                                             "op": "∧",
                                             "right": "gem"
                                         },
@@ -1145,9 +1637,35 @@
                         "exp": {
                             "left": {
                                 "exp": {
-                                    "args": [],
-                                    "function": "below_of_enemy",
-                                    "op": "call"
+
+    "left": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 3
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 3
+        }
+    },
+    "op": "∨",
+    "right": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 4
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 4
+        }
+    }
+
                                 },
                                 "op": "¬"
                             },
@@ -1197,11 +1715,7 @@
                                     "value": {
                                         "else": 0.0,
                                         "if": {
-                                            "left": {
-                                                "args": [],
-                                                "function": "below_of_home",
-                                                "op": "call"
-                                            },
+"left": false,
                                             "op": "∧",
                                             "right": "gold"
                                         },
@@ -1215,11 +1729,7 @@
                                     "value": {
                                         "else": 0.0,
                                         "if": {
-                                            "left": {
-                                                "args": [],
-                                                "function": "below_of_home",
-                                                "op": "call"
-                                            },
+"left": false,
                                             "op": "∧",
                                             "right": "gem"
                                         },
@@ -1248,19 +1758,25 @@
                                             "left": "gold",
                                             "op": "∧",
                                             "right": {
-                                                "exp": {
-                                                    "args": [],
-                                                    "function": "below_of_home",
-                                                    "op": "call"
-                                                },
+"exp": false,
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "below_of_gold",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 4
+    }
+
                                         }
                                     }
                                 },
@@ -1272,19 +1788,25 @@
                                             "left": "gem",
                                             "op": "∧",
                                             "right": {
-                                                "exp": {
-                                                    "args": [],
-                                                    "function": "below_of_home",
-                                                    "op": "call"
-                                                },
+"exp": false,
                                                 "op": "¬"
                                             }
                                         },
                                         "op": "∨",
                                         "right": {
-                                            "args": [],
-                                            "function": "below_of_gem",
-                                            "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 5
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 3
+    }
+
                                         }
                                     }
                                 },
@@ -1308,11 +1830,7 @@
                                     "value": {
                                         "else": 0.0,
                                         "if": {
-                                            "left": {
-                                                "args": [],
-                                                "function": "below_of_home",
-                                                "op": "call"
-                                            },
+"left": false,
                                             "op": "∧",
                                             "right": "gold"
                                         },
@@ -1326,11 +1844,7 @@
                                     "value": {
                                         "else": 0.0,
                                         "if": {
-                                            "left": {
-                                                "args": [],
-                                                "function": "below_of_home",
-                                                "op": "call"
-                                            },
+"left": false,
                                             "op": "∧",
                                             "right": "gem"
                                         },
@@ -1358,9 +1872,35 @@
                         "comment": "(below_of_enemy & (y < 5))",
                         "exp": {
                             "left": {
-                                "args": [],
-                                "function": "below_of_enemy",
-                                "op": "call"
+
+    "left": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 3
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 3
+        }
+    },
+    "op": "∨",
+    "right": {
+        "left": {
+            "left": "x",
+            "op": "=",
+            "right": 4
+        },
+        "op": "∧",
+        "right": {
+            "left": "y",
+            "op": "=",
+            "right": 4
+        }
+    }
+
                             },
                             "op": "∧",
                             "right": {
@@ -1433,9 +1973,19 @@
                                                 "else": 0,
                                                 "if": {
                                                     "left": {
-                                                        "args": [],
-                                                        "function": "above_of_home",
-                                                        "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                                     },
                                                     "op": "∧",
                                                     "right": "gold"
@@ -1470,9 +2020,19 @@
                                                 "else": 0,
                                                 "if": {
                                                     "left": {
-                                                        "args": [],
-                                                        "function": "right_of_home",
-                                                        "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                     },
                                                     "op": "∧",
                                                     "right": "gold"
@@ -1507,9 +2067,19 @@
                                                 "else": 0,
                                                 "if": {
                                                     "left": {
-                                                        "args": [],
-                                                        "function": "left_of_home",
-                                                        "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                     },
                                                     "op": "∧",
                                                     "right": "gold"
@@ -1543,11 +2113,7 @@
                                             "right": {
                                                 "else": 0,
                                                 "if": {
-                                                    "left": {
-                                                        "args": [],
-                                                        "function": "below_of_home",
-                                                        "op": "call"
-                                                    },
+"left": false,
                                                     "op": "∧",
                                                     "right": "gold"
                                                 },
@@ -1595,9 +2161,19 @@
                                                 "else": 0,
                                                 "if": {
                                                     "left": {
-                                                        "args": [],
-                                                        "function": "above_of_home",
-                                                        "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 3
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 2
+    }
+
                                                     },
                                                     "op": "∧",
                                                     "right": "gem"
@@ -1632,9 +2208,19 @@
                                                 "else": 0,
                                                 "if": {
                                                     "left": {
-                                                        "args": [],
-                                                        "function": "right_of_home",
-                                                        "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 4
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                     },
                                                     "op": "∧",
                                                     "right": "gem"
@@ -1669,9 +2255,19 @@
                                                 "else": 0,
                                                 "if": {
                                                     "left": {
-                                                        "args": [],
-                                                        "function": "left_of_home",
-                                                        "op": "call"
+
+    "left": {
+        "left": "x",
+        "op": "=",
+        "right": 2
+    },
+    "op": "∧",
+    "right": {
+        "left": "y",
+        "op": "=",
+        "right": 1
+    }
+
                                                     },
                                                     "op": "∧",
                                                     "right": "gem"
@@ -1705,11 +2301,7 @@
                                             "right": {
                                                 "else": 0,
                                                 "if": {
-                                                    "left": {
-                                                        "args": [],
-                                                        "function": "below_of_home",
-                                                        "op": "call"
-                                                    },
+"left": false,
                                                     "op": "∧",
                                                     "right": "gem"
                                                 },

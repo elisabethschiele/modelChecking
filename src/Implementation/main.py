@@ -105,4 +105,4 @@ def episode_done(state):
 
 
 CQI("../testing/models/resource-working-model.jani")
-
+# CQI("../testing/models/resource-gathering_parsed.jani")
