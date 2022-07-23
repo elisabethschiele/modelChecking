@@ -27,17 +27,35 @@ class DecisionTree:
         # return np.argmax(self.root.get_qs(state))
 
     def generate_splits(self, lows, highs, total_actions):
-        # generate two splits per feature: one at 1/3 distance between min and max and one at 2/3
+
         splits = []
-        for f in range(len(lows)):
-            for i in range(1):
+        for f in range(2): # two features we split upon: x and y
+            for i in range(4): # we want 4 splits: at 1.5, 2.5, 3.5, 4.5
                 splits.append(Split(f,
-                                    lows[f] + (highs[f] - lows[f]) / 2 * (i + 1),
+                                    lows[f] + 0.5 + i,
                                     np.zeros(total_actions),
                                     np.zeros(total_actions),
                                     0.5,
                                     0.5))
+
+        # generate two splits per feature: one at 1/3 distance between min and max and one at 2/3
+        # for f in range(len(lows)):
+        #     for i in range(4):
+        #         splits.append(Split(f,
+        #                             lows[f] + (highs[f] - lows[f]) / 5 * (i + 1),
+        #                             np.zeros(total_actions),
+        #                             np.zeros(total_actions),
+        #                             0.5,
+        #                             0.5))
         return splits
+
+    def update(self, L, action, reward, old_state, new_state, episode_done, gamma):
+        # target = r + gamma * max(Q(new_state, best_next_action))
+        if episode_done:
+            target = reward
+        else:
+            target = reward + (gamma * np.max(self.root.get_qs(new_state)))
+        # self.root.update(s, a, target, self.params)
 
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
