@@ -64,13 +64,11 @@ def CQI(model_path,
             L = tree.root.get_leaf(current_state)
             # at,rt,st+1 ←TakeAction(L);
             action, reward, new_state = take_action(current_state, epsilon, tree)
-            # UpdateLeafQValues(L, at , rt , st+1 );
-            tree.update(L, action, reward, current_state, new_state, episode_done, gamma)
 
+            # UpdateLeafQValues(L, at , rt , st+1 );
             # UpdateVisitFrequency(T ree, L);
             # UpdatePossibleSplits(L, st , at , st+1 );
-
-            # update_tree()
+            tree.update(action, reward, current_state, new_state, episode_done, alpha, gamma, d)
 
             # split_tree()
 
@@ -79,20 +77,22 @@ def CQI(model_path,
 
 def take_action(current_state, epsilon, tree):
     print("state: " + str(current_state.global_env))
-    print(current_state.global_env["y"].as_int)
     action = None
     if np.random.random() < epsilon:
         action = random.choice(current_state.transitions)
+        action_label = action.action.action_type.label
     else:
         # select based on largest Q-Value
         action_label = tree.select_action(current_state)
+
+        # TODO: might be redundant. Do we only need action label?
         action = find_action_by_label(current_state, action_label)
     print("selected action: " + action.action.action_type.label)
     new_state = action.destinations.pick().state
     reward = get_immediate_reward(current_state, new_state)
     print("state: " + str(new_state.global_env))
-    return action, reward, new_state
-
+    # return action, reward, new_state
+    return action_label, reward, new_state
 
 def get_value(state, variable_name):
     # returns integer value of variable_name
