@@ -13,8 +13,8 @@ class DecisionTree:
         self.action_names = action_names
 
         splits = self.generate_splits(lows, highs, action_names)
-        for split in splits:
-            print(str(split))
+        # for split in splits:
+        #     print(str(split))
 
         actions_qs = {} # mapping of actions to Q-values
         for action in action_names:
@@ -108,7 +108,7 @@ class Split():
             self.right_visits = self.right_visits * d + (1 - d)
             self.left_visits = self.left_visits * d
 
-        print(str(self))
+        # print(str(self))
 
 class TreeNode:
     #abstract class which might be deleted later
@@ -160,12 +160,12 @@ class LeafNode(TreeNode):
     def update(self, action, old_state, target, alpha, gamma, d):
         # update visit frequency
         super().update(action, old_state, target, alpha, gamma, d)
-        print("visits: "+str(self.visits))
+        # print("visits: "+str(self.visits))
 
         # update leaf Q values
-        print("action_val: "+str(self.actions_qs[action]))
+        # print("action_val: "+str(self.actions_qs[action]))
         self.actions_qs[action] = (1 - alpha) * self.actions_qs[action] + alpha * target
-        print("updated q_value of action \"" +str(action)+"\" is "+ str(self.actions_qs[action]))
+        # print("updated q_value of action \"" +str(action)+"\" is "+ str(self.actions_qs[action]))
 
         # update possible splits
         for split in self.splits:
@@ -207,19 +207,28 @@ class LeafNode(TreeNode):
     def best_split(self, Tree, state, action):
         # TODO: test
         Vp = Tree.root.get_vs(state)
+        # print(f'vp = {Vp}')
         SQ = []
         for i in range(len(self.splits)):
             split = self.splits[i]
             cl_array = []
             for key in split.left_qs:
                 cl_array.append(split.left_qs[key] - self.actions_qs[action])
+            # print(f'all cl values: {cl_array}')
+            # print(f'all left qs are: {split.left_qs}')
+            # print(f'action is: {action}')
+            # print(f'all action qs for current state are: {self.actions_qs}')
+            # print(f'action value in this state and action is: {self.actions_qs[action]}')
             cl = max(cl_array)
             cr_array = []
             for key in split.right_qs:
                 cr_array.append(split.right_qs[key] - self.actions_qs[action])
             cr = max(cr_array)
-
             SQ.append(Vp * (cl * split.left_visits + cr * split.right_visits))
+            # print(f"i = {i}")
+            # print(f'length of SQ = {len(SQ)}')
+            # print(f'SQ = {SQ}')
+            # print(f'{Vp} * ({cl} * {split.left_visits} + {cr} * {split.right_visits}) = {SQ[i]}')
         bestSplit = self.splits[np.argmax(SQ)]
         bestValue = max(SQ)
         return bestSplit, bestValue

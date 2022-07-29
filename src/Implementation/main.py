@@ -37,7 +37,7 @@ def CQI(model_path,
         d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
         num_of_episodes=10):
     initial_state = get_initial_state(model_path)
-    # print(initial_state.global_env)
+    print(f'Initial state: {initial_state.global_env}\n')
     # print(type(initial_state))
 
     # for boolean: Low = 0 = False
@@ -50,7 +50,7 @@ def CQI(model_path,
     # TODO: (optional) function that returns all actions present in the model
     # for action in initial_state.transitions:
     #     action_names.append(action.action.action_type.label)
-
+    print("initializing tree\n")
     tree = decision_tree.DecisionTree(initial_state, lows, highs, action_names)
     new_state = initial_state
 
@@ -60,26 +60,30 @@ def CQI(model_path,
     h_s = H_s
 
     for i in range(num_of_episodes):
+        print("enter for loop")
         while not episode_done:
+            print("enter while loop")
             # st ← current state at timestep t;
             current_state = new_state
 
             # L ← leaf of Tree corresponding to st;
             L = tree.root.get_leaf(current_state)
-
+            print("take action\n")
             # at,rt,st+1 ←TakeAction(L);
             action, reward, new_state = take_action(current_state, epsilon, tree)
 
+            print("update tree\n")
             # UpdateLeafQValues(L, at , rt , st+1 );
             # UpdateVisitFrequency(T ree, L);
             # UpdatePossibleSplits(L, st , at , st+1 );
             tree.update(action, reward, current_state, new_state, episode_done, alpha, gamma, d)
 
-            # bestSplit, bestV alue ← BestSplit(T ree, L, at)
+            print("choose best split")
+
+            # bestSplit, bestV value ← BestSplit(T ree, L, at)
             best_split, best_value = tree.best_split(current_state, action)
-            # print("-------- debug best_split --------")
-            # print(f"best split: {best_split}")
-            # print(f'best value: {best_value}')
+            print(f"best split: {best_split}")
+            print(f'best value: {best_value}')
 
             # # decide if we split
             # if best_value > h_s:
@@ -95,9 +99,11 @@ def take_action(current_state, epsilon, tree):
     print("state: " + str(current_state.global_env))
     action = None
     if np.random.random() < epsilon:
+        print("selected action randomly")
         action = random.choice(current_state.transitions)
         action_label = action.action.action_type.label
     else:
+        print("selected action with biggest q value")
         # select based on largest Q-Value
         action_label = tree.select_action(current_state)
 
