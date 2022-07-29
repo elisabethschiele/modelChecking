@@ -22,7 +22,7 @@ class DecisionTree:
         self.root = LeafNode(actions_qs, 1, splits)
 
     def select_action(self, state):
-        # select action with the largest Q value
+        #select action with the largest Q value
         return max(self.root.get_qs(state).items(), key=operator.itemgetter(1))[0]
         # return np.argmax(self.root.get_qs(state))
 
@@ -72,6 +72,11 @@ class DecisionTree:
         print("target: "+str(target))
 
         self.root.update(action, old_state, target, alpha, gamma, d)
+
+    def split_node(self, old_state, L, best_split):
+        left_splits = self.generate_splits(self.lows, self.highs, self.actions)
+        right_splits = self.generate_splits(self.lows, self.highs, self.actions)
+        self.root.split_node(old_state, L, best_split, left_splits, right_splits)
 
     def bestSplit(self, state, action):
         # calls best_split on leaf corresponding to state
@@ -134,6 +139,10 @@ class TreeNode:
         # update visit frequency of siblings on the path
         self.visits = self.visits * d
 
+    @abstractmethod
+    def split_node(self, old_state, L, best_split, left_splits, right_splits):
+        pass
+
 class LeafNode(TreeNode):
 
     def __init__(self, actions_qs, visits, splits):
@@ -165,7 +174,7 @@ class LeafNode(TreeNode):
         #Algorithm 7
         Bv = self.visits
         Bu = best_split.feature
-        
+
         Lv = best_split.left_visits
         Lq = best_split.left_qs
         Rv = best_split.right_visits
@@ -178,6 +187,21 @@ class LeafNode(TreeNode):
 
     def get_leaf(self, state):
         return self
+
+    def split_node(self, old_state, L, best_split, left_splits, right_splits):
+        # Algorithm 7
+        Bv = self.visits
+        Bu = best_split.feature
+
+        Lv = best_split.left_visits
+        Lq = best_split.left_qs
+        Rv = best_split.right_visits
+        Rq = best_split.right_qs
+
+        L = LeafNode(Lq, Lv, left_splits)
+        R = LeafNode(Rq, Rv, right_splits)
+        B = Inner_Node(Bu, Bv, L, R, self.visits)
+        return B, L, R
 
     def best_split(self, Tree, state, action):
         # TODO: test
@@ -202,7 +226,7 @@ class LeafNode(TreeNode):
     def get_vs(self, state):
         # returns values of all visits from root to leaf corresponding to state
         return self.visits
-        
+
 
 
 
@@ -243,6 +267,13 @@ class Inner_Node(TreeNode):
         next_node, sibling = self.select_child(old_state)
         next_node.update(action, old_state, target, alpha, gamma, d)
         sibling.update_sibling(action, old_state, target, alpha, gamma, d)
+
+    def split_node(self, old_state, L, best_split, left_splits, right_splits):
+        if old_state[self.feature] < self.value:
+            self.left_child = self.left_child.split(old_state, L, best_split, left_splits, right_splits)
+        else:
+            self.right_child = self.right_child.split(old_state, L, best_split, left_splits, right_splits)
+
 
     def get_vs(self, state):
         # returns values of all visits from root to leaf corresponding to state
