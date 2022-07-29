@@ -4,7 +4,7 @@ import numpy as np
 from momba import engine, jani
 import pathlib
 import decision_tree
-from src.Implementation.rewards import get_immediate_reward
+from rewards import get_immediate_reward
 
 
 def get_initial_state(model_path):
@@ -75,15 +75,18 @@ def CQI(model_path,
             # UpdatePossibleSplits(L, st , at , st+1 );
             tree.update(action, reward, current_state, new_state, episode_done, alpha, gamma, d)
 
-            # best_split, best_value = find_best_split(...) -TODO
-            best_split, best_value = None, None
+            # bestSplit, bestV alue ← BestSplit(T ree, L, at)
+            best_split, best_value = tree.best_split(current_state, action)
+            # print("-------- debug best_split --------")
+            # print(f"best split: {best_split}")
+            # print(f'best value: {best_value}')
 
-            # decide if we split
-            if best_value > h_s:
-                # split_node()
-                tree.split_node(current_state, L, best_split)
-            else:
-                h_s = h_s * D
+            # # decide if we split
+            # if best_value > h_s:
+            #     # split_node()
+            #     tree.split_node(current_state, L, best_split)
+            # else:
+            #     h_s = h_s * D
 
             episode_done = True
 
@@ -133,5 +136,5 @@ def find_action_by_label(state, label):
     print("No action found matching label " + label)
 
 
-CQI("../testing/models/resource-working-model.jani")
+CQI("/Users/elisabeth/Desktop/model checking/modelChecking/src/Testing/models/resource-working-model.jani")
 # CQI("../testing/models/resource-gathering_parsed.jani")

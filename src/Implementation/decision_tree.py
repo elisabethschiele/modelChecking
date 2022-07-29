@@ -78,9 +78,10 @@ class DecisionTree:
         right_splits = self.generate_splits(self.lows, self.highs, self.actions)
         self.root.split_node(old_state, L, best_split, left_splits, right_splits)
 
-    def bestSplit(self, state, action):
+    def best_split(self, state, action):
         # calls best_split on leaf corresponding to state
-        self.root.get_leaf.best_split(self, state, action)
+        L = self.root.get_leaf(state)
+        return L.best_split(self, state, action)
 
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
@@ -210,16 +211,16 @@ class LeafNode(TreeNode):
         for i in range(len(self.splits)):
             split = self.splits[i]
             cl_array = []
-            for j in range(len(split.left_qs)):
-                cl_array.append(split.left_qs[j] - self.actions_qs[action])
+            for key in split.left_qs:
+                cl_array.append(split.left_qs[key] - self.actions_qs[action])
             cl = max(cl_array)
             cr_array = []
-            for j in range(len(split.right_qs)):
-                cl_array.append(split.right_qs[j] - self.actions_qs[action])
+            for key in split.right_qs:
+                cr_array.append(split.right_qs[key] - self.actions_qs[action])
             cr = max(cr_array)
 
             SQ.append(Vp * (cl * split.left_visits + cr * split.right_visits))
-        bestSplit = self.splits[np.argmax(SQ)[0]]
+        bestSplit = self.splits[np.argmax(SQ)]
         bestValue = max(SQ)
         return bestSplit, bestValue
 
