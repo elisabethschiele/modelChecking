@@ -73,6 +73,10 @@ class DecisionTree:
 
         self.root.update(action, old_state, target, alpha, gamma, d)
 
+    def bestSplit(self, state, action):
+        # calls bestSplit on leaf corresponding to state
+        self.root.get_leaf.bestSplit(self, state, action)
+
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
         self.feature = feature # index of state variable
@@ -178,7 +182,22 @@ class LeafNode(TreeNode):
     def best_split(self, Tree, state, action):
         # TODO
         Vp = Tree.root.get_vs(state)
-        pass
+        SQ = []
+        for i in range(len(self.splits)):
+            split = self.splits[i]
+            cl_array = []
+            for j in range(len(split.left_qs)):
+                cl_array.append(split.left_qs[j] - self.actions_qs[action])
+            cl = max(cl_array)
+            cr_array = []
+            for j in range(len(split.right_qs)):
+                cl_array.append(split.right_qs[j] - self.actions_qs[action])
+            cr = max(cr_array)
+
+            SQ.append(Vp * (cl * split.left_visits + cr * split.right_visits))
+        bestSplit = self.splits[np.argmax(SQ)[0]]
+        bestValue = max(SQ)
+        return bestSplit, bestValue
 
     def get_vs(self, state):
         # returns values of all visits from root to leaf corresponding to state
