@@ -180,7 +180,7 @@ class LeafNode(TreeNode):
         return self
 
     def best_split(self, Tree, state, action):
-        # TODO
+        # TODO: test
         Vp = Tree.root.get_vs(state)
         SQ = []
         for i in range(len(self.splits)):

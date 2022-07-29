@@ -120,7 +120,7 @@ def find_action_by_label(state, label):
     for action in state.transitions:
         if action.action.action_type.label == label:
             return action
-    print("No action found mathing label " + label)
+    print("No action found matching label " + label)
 
 
 CQI("../testing/models/resource-working-model.jani")
