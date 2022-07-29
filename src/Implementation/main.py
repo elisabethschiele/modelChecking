@@ -55,6 +55,8 @@ def CQI(model_path,
 
     episode_done = False
 
+    h_s = H_s
+
     for i in range(num_of_episodes):
         while not episode_done:
             # st ← current state at timestep t;
@@ -70,7 +72,15 @@ def CQI(model_path,
             # UpdatePossibleSplits(L, st , at , st+1 );
             tree.update(action, reward, current_state, new_state, episode_done, alpha, gamma, d)
 
-            # split_tree()
+            # best_split, best_value = find_best_split(...) -TODO
+            best_split, best_value = None, None
+
+            # decide if we split
+            if best_value > h_s:
+                # split_node()
+                tree.split_node(current_state, L, best_split)
+            else:
+                h_s = h_s * D
 
             episode_done = True
 
