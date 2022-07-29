@@ -74,7 +74,7 @@ class DecisionTree:
         self.root.update(action, old_state, target, alpha, gamma, d)
 
     def bestSplit(self, state, action):
-        # calls bestSplit on leaf corresponding to state
+        # calls best_split on leaf corresponding to state
         self.root.get_leaf.bestSplit(self, state, action)
 
 class Split():
