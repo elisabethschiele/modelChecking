@@ -22,7 +22,7 @@ class DecisionTree:
         self.root = LeafNode(actions_qs, 1, splits)
 
     def select_action(self, state):
-        #select action with the largest Q value
+        # select action with the largest Q value
         return max(self.root.get_qs(state).items(), key=operator.itemgetter(1))[0]
         # return np.argmax(self.root.get_qs(state))
 
@@ -118,6 +118,10 @@ class TreeNode:
     def get_leaf(self, state):
         pass
 
+    @abstractmethod
+    def get_vs(self, state):
+        pass
+
     def update(self, action, old_state, target, alpha, gamma, d):
         # update visit frequency on the path
         self.visits = self.visits * d + (1 - d)
@@ -155,10 +159,31 @@ class LeafNode(TreeNode):
 
     def split(self, best_split):
         #Algorithm 7
-        pass
+        Bv = self.visits
+        Bu = best_split.feature
+        
+        Lv = best_split.left_visits
+        Lq = best_split.left_qs
+        Rv = best_split.right_visits
+        Rq = best_split.right_qs
+
+        L = LeafNode(Lq, Lv, self.splits)
+        R = LeafNode(Rq, Rv, self.splits)
+        B = Inner_Node(Bu, Bv, L, R, self.visits)
+        return B, L, R
 
     def get_leaf(self, state):
         return self
+
+    def best_split(self, Tree, state, action):
+        # TODO
+        Vp = Tree.root.get_vs(state)
+        pass
+
+    def get_vs(self, state):
+        # returns values of all visits from root to leaf corresponding to state
+        return self.visits
+        
 
 
 
@@ -199,3 +224,7 @@ class Inner_Node(TreeNode):
         next_node, sibling = self.select_child(old_state)
         next_node.update(action, old_state, target, alpha, gamma, d)
         sibling.update_sibling(action, old_state, target, alpha, gamma, d)
+
+    def get_vs(self, state):
+        # returns values of all visits from root to leaf corresponding to state
+        return self.visits * self.select_child(state)[0].get_vs(state)

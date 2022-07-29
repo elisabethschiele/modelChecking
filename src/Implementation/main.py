@@ -44,6 +44,7 @@ def CQI(model_path,
     # High = 1 = True
     lows = [1, 1, 0, 0, 0, 0, 0]  # array of the lowest values of model variables
     highs = [5, 5, 1, 1, 1, 1, 1]  # array of the highest values of model variables
+
     # total_actions = 4  # total number of actions in the model
     action_names = ["left", "right", "top", "down"]  # all actions
     # TODO: (optional) function that returns all actions present in the model
@@ -53,6 +54,7 @@ def CQI(model_path,
     tree = decision_tree.DecisionTree(initial_state, lows, highs, action_names)
     new_state = initial_state
 
+    # TODO: switch to episode_done = episode_done(new_state)
     episode_done = False
 
     for i in range(num_of_episodes):
@@ -62,6 +64,7 @@ def CQI(model_path,
 
             # L ← leaf of Tree corresponding to st;
             L = tree.root.get_leaf(current_state)
+
             # at,rt,st+1 ←TakeAction(L);
             action, reward, new_state = take_action(current_state, epsilon, tree)
 
