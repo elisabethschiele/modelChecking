@@ -75,7 +75,7 @@ class DecisionTree:
 
     def bestSplit(self, state, action):
         # calls best_split on leaf corresponding to state
-        self.root.get_leaf.bestSplit(self, state, action)
+        self.root.get_leaf.best_split(self, state, action)
 
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
