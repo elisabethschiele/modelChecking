@@ -78,6 +78,10 @@ class DecisionTree:
         right_splits = self.generate_splits(self.lows, self.highs, self.actions)
         self.root.split_node(old_state, L, best_split, left_splits, right_splits)
 
+    def bestSplit(self, state, action):
+        # calls best_split on leaf corresponding to state
+        self.root.get_leaf.best_split(self, state, action)
+
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
         self.feature = feature # index of state variable
@@ -123,6 +127,10 @@ class TreeNode:
     def get_leaf(self, state):
         pass
 
+    @abstractmethod
+    def get_vs(self, state):
+        pass
+
     def update(self, action, old_state, target, alpha, gamma, d):
         # update visit frequency on the path
         self.visits = self.visits * d + (1 - d)
@@ -162,6 +170,21 @@ class LeafNode(TreeNode):
         for split in self.splits:
             split.update(action, old_state, target, alpha, gamma, d)
 
+    def split(self, best_split):
+        #Algorithm 7
+        Bv = self.visits
+        Bu = best_split.feature
+
+        Lv = best_split.left_visits
+        Lq = best_split.left_qs
+        Rv = best_split.right_visits
+        Rq = best_split.right_qs
+
+        L = LeafNode(Lq, Lv, self.splits)
+        R = LeafNode(Rq, Rv, self.splits)
+        B = Inner_Node(Bu, Bv, L, R, self.visits)
+        return B, L, R
+
     def get_leaf(self, state):
         return self
 
@@ -179,6 +202,31 @@ class LeafNode(TreeNode):
         R = LeafNode(Rq, Rv, right_splits)
         B = Inner_Node(Bu, Bv, L, R, self.visits)
         return B, L, R
+
+    def best_split(self, Tree, state, action):
+        # TODO
+        Vp = Tree.root.get_vs(state)
+        SQ = []
+        for i in range(len(self.splits)):
+            split = self.splits[i]
+            cl_array = []
+            for j in range(len(split.left_qs)):
+                cl_array.append(split.left_qs[j] - self.actions_qs[action])
+            cl = max(cl_array)
+            cr_array = []
+            for j in range(len(split.right_qs)):
+                cl_array.append(split.right_qs[j] - self.actions_qs[action])
+            cr = max(cr_array)
+
+            SQ.append(Vp * (cl * split.left_visits + cr * split.right_visits))
+        bestSplit = self.splits[np.argmax(SQ)[0]]
+        bestValue = max(SQ)
+        return bestSplit, bestValue
+
+    def get_vs(self, state):
+        # returns values of all visits from root to leaf corresponding to state
+        return self.visits
+
 
 
 
@@ -225,3 +273,8 @@ class Inner_Node(TreeNode):
             self.left_child = self.left_child.split(old_state, L, best_split, left_splits, right_splits)
         else:
             self.right_child = self.right_child.split(old_state, L, best_split, left_splits, right_splits)
+
+
+    def get_vs(self, state):
+        # returns values of all visits from root to leaf corresponding to state
+        return self.visits * self.select_child(state)[0].get_vs(state)
