@@ -60,28 +60,35 @@ def CQI(model_path,
     h_s = H_s
 
     for i in range(num_of_episodes):
+        print("enter for loop")
         while not episode_done:
+            print("enter while loop")
             # st ← current state at timestep t;
             current_state = new_state
 
             # L ← leaf of Tree corresponding to st;
             L = tree.root.get_leaf(current_state)
-
+            print("take action\n")
             # at,rt,st+1 ←TakeAction(L);
             action, reward, new_state = take_action(current_state, epsilon, tree)
 
+            print("update tree\n")
             # UpdateLeafQValues(L, at , rt , st+1 );
             # UpdateVisitFrequency(T ree, L);
             # UpdatePossibleSplits(L, st , at , st+1 );
             tree.update(action, reward, current_state, new_state, episode_done, alpha, gamma, d)
 
-            # best_split, best_value = find_best_split(...) -TODO
-            best_split, best_value = None, None
+            print("choose best split")
 
-            # decide if we split
+            # bestSplit, bestV value ← BestSplit(T ree, L, at)
+            best_split, best_value = tree.best_split(current_state, action)
+            print(f"best split: {best_split}")
+            print(f'best value: {best_value}')
+
+            # # decide if we split
             # if best_value > h_s:
-                # split_node()
-            tree.split_node(current_state, L, best_split)
+            #     # split_node()
+            #     tree.split_node(current_state, L, best_split)
             # else:
             #     h_s = h_s * D
 
@@ -92,9 +99,11 @@ def take_action(current_state, epsilon, tree):
     print("state: " + str(current_state.global_env))
     action = None
     if np.random.random() < epsilon:
+        print("selected action randomly")
         action = random.choice(current_state.transitions)
         action_label = action.action.action_type.label
     else:
+        print("selected action with biggest q value")
         # select based on largest Q-Value
         action_label = tree.select_action(current_state)
 
@@ -130,8 +139,8 @@ def find_action_by_label(state, label):
     for action in state.transitions:
         if action.action.action_type.label == label:
             return action
-    print("No action found mathing label " + label)
+    print("No action found matching label " + label)
 
 
-CQI("../testing/models/resource-working-model.jani")
+CQI("/Users/elisabeth/Desktop/model checking/modelChecking/src/Testing/models/resource-working-model.jani")
 # CQI("../testing/models/resource-gathering_parsed.jani")
