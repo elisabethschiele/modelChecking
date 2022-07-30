@@ -79,11 +79,11 @@ def CQI(model_path,
             best_split, best_value = None, None
 
             # decide if we split
-            if best_value > h_s:
+            # if best_value > h_s:
                 # split_node()
-                tree.split_node(current_state, L, best_split)
-            else:
-                h_s = h_s * D
+            tree.split_node(current_state, L, best_split)
+            # else:
+            #     h_s = h_s * D
 
             episode_done = True
 
