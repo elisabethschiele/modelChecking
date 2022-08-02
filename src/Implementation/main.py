@@ -35,7 +35,7 @@ def CQI(model_path,
         gamma=0.99,  # const for the Bellman equation
         alpha=0.01,  # const for the Bellman equation
         d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
-        num_of_episodes=20):
+        num_of_episodes=10):
     initial_state = get_initial_state(model_path)
     # print(initial_state.global_env)
     # print(type(initial_state))
@@ -52,12 +52,13 @@ def CQI(model_path,
     #     action_names.append(action.action.action_type.label)
 
     tree = decision_tree.DecisionTree(initial_state, lows, highs, action_names)
+    new_state = initial_state
 
     # TODO: switch to episode_done = episode_done(new_state)
 
 
     h_s = H_s
-
+    j = 0
     for i in range(num_of_episodes):
         new_state = initial_state
         print("****************")
