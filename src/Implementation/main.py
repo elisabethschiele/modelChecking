@@ -55,44 +55,51 @@ def CQI(model_path,
     new_state = initial_state
 
     # TODO: switch to episode_done = episode_done(new_state)
-    episode_done = False
+
 
     h_s = H_s
-
+    j = 0
     for i in range(num_of_episodes):
-        print("enter for loop")
+        print("****************")
+        print("Episode "+str(i+1))
+        print("****************")
+        episode_done = False
         while not episode_done:
-            print("enter while loop")
+            print("Iteration "+str(j+1))
+            print("Struct"+tree.structure())
             # st ← current state at timestep t;
             current_state = new_state
 
             # L ← leaf of Tree corresponding to st;
             L = tree.root.get_leaf(current_state)
-            print("take action\n")
+            # print("take action\n")
             # at,rt,st+1 ←TakeAction(L);
             action, reward, new_state = take_action(current_state, epsilon, tree)
 
-            print("update tree\n")
+            # print("update tree\n")
             # UpdateLeafQValues(L, at , rt , st+1 );
             # UpdateVisitFrequency(T ree, L);
             # UpdatePossibleSplits(L, st , at , st+1 );
             tree.update(action, reward, current_state, new_state, episode_done, alpha, gamma, d)
 
-            print("choose best split")
+            # print("choose best split")
 
             # bestSplit, bestV value ← BestSplit(T ree, L, at)
             best_split, best_value = tree.best_split(current_state, action)
             print(f"best split: {best_split}")
-            print(f'best value: {best_value}')
+            print(f"best value: {best_value}")
 
-            # # decide if we split
+            # decide if we split
             # if best_value > h_s:
-            #     # split_node()
-            #     tree.split_node(current_state, L, best_split)
+                # split node
+            tree.split_node(current_state, L, best_split)
             # else:
             #     h_s = h_s * D
 
-            episode_done = True
+            j = j + 1
+            if j == 10:
+                episode_done = True
+                j = 0
 
 
 def take_action(current_state, epsilon, tree):
@@ -109,6 +116,7 @@ def take_action(current_state, epsilon, tree):
 
         # TODO: might be redundant. Do we only need action label?
         action = find_action_by_label(current_state, action_label)
+    # print(current_state.global_env)
     print("selected action: " + action.action.action_type.label)
     new_state = action.destinations.pick().state
     reward = get_immediate_reward(current_state, new_state)
@@ -140,7 +148,8 @@ def find_action_by_label(state, label):
         if action.action.action_type.label == label:
             return action
     print("No action found matching label " + label)
+    return -1
 
 
-CQI("/Users/elisabeth/Desktop/model checking/modelChecking/src/Testing/models/resource-working-model.jani")
+CQI("../Testing/models/resource-working-model.jani")
 # CQI("../testing/models/resource-gathering_parsed.jani")

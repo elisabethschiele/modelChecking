@@ -3,6 +3,8 @@ from abc import abstractmethod
 
 import numpy as np
 
+# from src.Implementation.main import find_action_by_label
+
 
 class DecisionTree:
     def __init__(self, initial_state, lows, highs, action_names):
@@ -22,9 +24,19 @@ class DecisionTree:
         self.root = LeafNode(actions_qs, 1, splits)
 
     def select_action(self, state):
-        #select action with the largest Q value
-        return max(self.root.get_qs(state).items(), key=operator.itemgetter(1))[0]
-        # return np.argmax(self.root.get_qs(state))
+        # select action with highest q value among those that are allowed
+        sorted_by_q = dict(sorted(self.root.get_qs(state).items(), key=lambda item: item[1], reverse=True))
+        for key in sorted_by_q:
+            if self.find_action_by_label(state, key) != -1:
+                return key
+        # return max(self.root.get_qs(state).items(), key=operator.itemgetter(1))[0]
+
+    def find_action_by_label(self, state, label):
+        for action in state.transitions:
+            if action.action.action_type.label == label:
+                return action
+        print("No action found matching label " + label)
+        return -1
 
     def generate_splits(self, lows, highs, action_names):
 
@@ -33,7 +45,7 @@ class DecisionTree:
             default_qs[action] = 0
 
         splits = []
-        for f in range(2): # two features we split upon: x and y
+        for f in range(2): # two features we split upon: x and y TODO
             for i in range(4): # we want 4 splits: at 1.5, 2.5, 3.5, 4.5
                 right_qs = {}  # mapping of actions to Q-values
                 for action in action_names:
@@ -69,19 +81,20 @@ class DecisionTree:
         else:
             target = reward + (gamma * max(self.root.get_qs(new_state).items(), key=operator.itemgetter(1))[1])
 
-        print("target: "+str(target))
-
         self.root.update(action, old_state, target, alpha, gamma, d)
 
     def split_node(self, old_state, L, best_split):
-        left_splits = self.generate_splits(self.lows, self.highs, self.actions)
-        right_splits = self.generate_splits(self.lows, self.highs, self.actions)
-        self.root.split_node(old_state, L, best_split, left_splits, right_splits)
+        left_splits = self.generate_splits(self.lows, self.highs, self.action_names)
+        right_splits = self.generate_splits(self.lows, self.highs, self.action_names)
+        self.root = self.root.split_node(old_state, L, best_split, left_splits, right_splits)
 
     def best_split(self, state, action):
         # calls best_split on leaf corresponding to state
         L = self.root.get_leaf(state)
         return L.best_split(self, state, action)
+
+    def structure(self):
+        return self.root.structure()
 
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
@@ -97,6 +110,7 @@ class Split():
 
     def update(self, action, old_state, target, alpha, gamma, d):
         # feature 0 corresponds to x, feature 1 - to y
+        # TODO: generalize
         feature_label = "x" if self.feature == 0 else "y"
 
         if old_state.global_env[feature_label].as_int < self.value:
@@ -150,6 +164,17 @@ class LeafNode(TreeNode):
         self.actions_qs = actions_qs
         self.visits = visits
         self.splits = splits
+        # print(str(self))
+        # print(self.structure())
+
+    def __str__(self):
+        splits_str = "\n"
+        for split in self.splits:
+            splits_str +=str(split)+"\n"
+        return f"LNode. actions_qs: {self.actions_qs}, visits: {self.visits}, splits: {splits_str}"
+
+    def structure(self):
+        return str(self.actions_qs)
 
     def is_leaf(self):
         return True
@@ -171,21 +196,6 @@ class LeafNode(TreeNode):
         for split in self.splits:
             split.update(action, old_state, target, alpha, gamma, d)
 
-    def split(self, best_split):
-        #Algorithm 7
-        Bv = self.visits
-        Bu = best_split.feature
-
-        Lv = best_split.left_visits
-        Lq = best_split.left_qs
-        Rv = best_split.right_visits
-        Rq = best_split.right_qs
-
-        L = LeafNode(Lq, Lv, self.splits)
-        R = LeafNode(Rq, Rv, self.splits)
-        B = Inner_Node(Bu, Bv, L, R, self.visits)
-        return B, L, R
-
     def get_leaf(self, state):
         return self
 
@@ -193,16 +203,17 @@ class LeafNode(TreeNode):
         # Algorithm 7
         Bv = self.visits
         Bu = best_split.feature
+        Bm = best_split.value
 
         Lv = best_split.left_visits
         Lq = best_split.left_qs
         Rv = best_split.right_visits
         Rq = best_split.right_qs
 
-        L = LeafNode(Lq, Lv, left_splits)
-        R = LeafNode(Rq, Rv, right_splits)
-        B = Inner_Node(Bu, Bv, L, R, self.visits)
-        return B, L, R
+        Left_Child = LeafNode(Lq, Lv, left_splits)
+        Right_Child = LeafNode(Rq, Rv, right_splits)
+        B = Inner_Node(Bu, Bm, Left_Child, Right_Child, Bv)
+        return B
 
     def best_split(self, Tree, state, action):
         # TODO: test
@@ -251,6 +262,13 @@ class Inner_Node(TreeNode):
         self.left_child = left_child
         self.right_child = right_child
         self.visits = visits
+        # print(str(self))
+
+    def __str__(self):
+        return f"BNode. feature: {self.feature}, value: {self.value}, visits: {self.visits}"
+
+    def structure(self):
+        return "{"+str(self.feature)+": "+str(self.value)+self.left_child.structure()+","+self.right_child.structure()+"}"
 
     def is_leaf(self):
         return False
@@ -261,7 +279,10 @@ class Inner_Node(TreeNode):
 
     def select_child(self, state):
         # selects the child that corresponds to the state
-        if state[self.feature] < self.value:
+        # TODO: generalize
+        feature_label = "x" if self.feature == 0 else "y"
+
+        if state.global_env[feature_label].as_int < self.value:
             return self.left_child, self.right_child
         else:
             return self.right_child, self.left_child
@@ -279,11 +300,13 @@ class Inner_Node(TreeNode):
         sibling.update_sibling(action, old_state, target, alpha, gamma, d)
 
     def split_node(self, old_state, L, best_split, left_splits, right_splits):
-        if old_state[self.feature] < self.value:
-            self.left_child = self.left_child.split(old_state, L, best_split, left_splits, right_splits)
+        # TODO: generalize
+        feature_label = "x" if self.feature == 0 else "y"
+        if old_state.global_env[feature_label].as_int < self.value:
+            self.left_child = self.left_child.split_node(old_state, L, best_split, left_splits, right_splits)
         else:
-            self.right_child = self.right_child.split(old_state, L, best_split, left_splits, right_splits)
-
+            self.right_child = self.right_child.split_node(old_state, L, best_split, left_splits, right_splits)
+        return self
 
     def get_vs(self, state):
         # returns values of all visits from root to leaf corresponding to state
