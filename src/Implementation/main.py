@@ -4,7 +4,7 @@ import numpy as np
 from momba import engine, jani
 import pathlib
 import decision_tree
-from src.Implementation.rewards import get_immediate_reward
+from rewards import get_immediate_reward
 
 
 def get_initial_state(model_path):
@@ -65,8 +65,8 @@ def CQI(model_path,
         print("****************")
         episode_done = False
         while not episode_done:
-            print("Iteration "+str(j+1))
-            print("Struct"+tree.structure())
+            #print("Iteration "+str(j+1))
+            #print("Struct"+tree.structure())
             # st ← current state at timestep t;
             current_state = new_state
 
@@ -86,6 +86,9 @@ def CQI(model_path,
 
             # bestSplit, bestV value ← BestSplit(T ree, L, at)
             best_split, best_value = tree.best_split(current_state, action)
+            # print(f"all splits:")
+            # for split in tree.root.get_leaf(current_state).splits:
+            #     print(split)
             print(f"best split: {best_split}")
             print(f"best value: {best_value}")
 
@@ -151,5 +154,6 @@ def find_action_by_label(state, label):
     return -1
 
 
-CQI("../Testing/models/resource-working-model.jani")
+CQI("src/Testing/models/resource-working-model.jani")
 # CQI("../testing/models/resource-gathering_parsed.jani")
+

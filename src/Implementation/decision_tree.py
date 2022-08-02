@@ -23,6 +23,7 @@ class DecisionTree:
             actions_qs[action] = 0
         self.root = LeafNode(actions_qs, 1, splits)
 
+
     def select_action(self, state):
         # select action with highest q value among those that are allowed
         sorted_by_q = dict(sorted(self.root.get_qs(state).items(), key=lambda item: item[1], reverse=True))
@@ -45,8 +46,8 @@ class DecisionTree:
             default_qs[action] = 0
 
         splits = []
-        for f in range(2): # two features we split upon: x and y TODO
-            for i in range(4): # we want 4 splits: at 1.5, 2.5, 3.5, 4.5
+        for f in range(len(highs)): # iterate for all features
+            for i in range(highs[f]-lows[f]): # we want splits at 0.5, 1.5, 2.5, 3.5, ... -> i+0.5+lows[f]
                 right_qs = {}  # mapping of actions to Q-values
                 for action in action_names:
                     right_qs[action] = 0
@@ -106,12 +107,14 @@ class Split():
         self.right_visits = right_visits
 
     def __str__(self):
-        return f"feature: {self.feature}, value: {self.value}, left_qs: {self.left_qs}, right_qs: {self.right_qs}, left_visits: {self.left_visits}, right_visits {self.right_visits}"
+        return f"feature: {get_feature_name(self.feature)}, value: {self.value}, left_qs: {self.left_qs}, right_qs: {self.right_qs}, left_visits: {self.left_visits}, right_visits {self.right_visits}"
+
+
 
     def update(self, action, old_state, target, alpha, gamma, d):
         # feature 0 corresponds to x, feature 1 - to y
-        # TODO: generalize
-        feature_label = "x" if self.feature == 0 else "y"
+        # TODO: generalize - DONE
+        feature_label = get_feature_name(self.feature)
 
         if old_state.global_env[feature_label].as_int < self.value:
             self.left_qs[action] = (1 - alpha) * self.left_qs[action] + alpha * target
@@ -216,7 +219,6 @@ class LeafNode(TreeNode):
         return B
 
     def best_split(self, Tree, state, action):
-        # TODO: test
         Vp = Tree.root.get_vs(state)
         # print(f'vp = {Vp}')
         SQ = []
@@ -279,8 +281,8 @@ class Inner_Node(TreeNode):
 
     def select_child(self, state):
         # selects the child that corresponds to the state
-        # TODO: generalize
-        feature_label = "x" if self.feature == 0 else "y"
+        # TODO: generalize - Done
+        feature_label = get_feature_name(self.feature)
 
         if state.global_env[feature_label].as_int < self.value:
             return self.left_child, self.right_child
@@ -300,8 +302,9 @@ class Inner_Node(TreeNode):
         sibling.update_sibling(action, old_state, target, alpha, gamma, d)
 
     def split_node(self, old_state, L, best_split, left_splits, right_splits):
-        # TODO: generalize
-        feature_label = "x" if self.feature == 0 else "y"
+        # TODO: generalize - Done
+        feature_label = get_feature_name(self.feature)
+
         if old_state.global_env[feature_label].as_int < self.value:
             self.left_child = self.left_child.split_node(old_state, L, best_split, left_splits, right_splits)
         else:
@@ -311,3 +314,20 @@ class Inner_Node(TreeNode):
     def get_vs(self, state):
         # returns values of all visits from root to leaf corresponding to state
         return self.visits * self.select_child(state)[0].get_vs(state)
+
+def get_feature_name(index):
+        if index == 0: 
+            return "x"
+        if index == 1: 
+            return "y"
+        if index == 2: 
+            return "required_gold"
+        if index == 3: 
+            return "required_gem"
+        if index == 4: 
+            return "gold"
+        if index == 5: 
+            return "gem"
+        if index == 6: 
+            return "attacked"
+        return "none"
