@@ -238,8 +238,9 @@ class LeafNode(TreeNode):
             SQ.append(Vp * (cl * split.left_visits + cr * split.right_visits))
             # print(f"i = {i}")
             # print(f'length of SQ = {len(SQ)}')
-            # print(f'SQ = {SQ}')
+
             # print(f'{Vp} * ({cl} * {split.left_visits} + {cr} * {split.right_visits}) = {SQ[i]}')
+        print(f'SQ = {SQ}')
         bestSplit = self.splits[np.argmax(SQ)]
         bestValue = max(SQ)
         return bestSplit, bestValue
@@ -268,7 +269,7 @@ class Inner_Node(TreeNode):
         return f"BNode. feature: {self.feature}, value: {self.value}, visits: {self.visits}"
 
     def structure(self):
-        return "{"+str(self.feature)+": "+str(self.value)+self.left_child.structure()+","+self.right_child.structure()+"}"
+        return "{"+str(self.feature)+": "+str(self.value)+" "+self.left_child.structure()+","+self.right_child.structure()+"}"
 
     def is_leaf(self):
         return False

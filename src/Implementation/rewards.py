@@ -29,3 +29,14 @@ def get_immediate_reward(old_state, new_state):
         return REW_GEM
 
     return -1
+
+# def episode_finished(state):
+#     x = state.global_env["x"].as_int
+#     y = state.global_env["y"].as_int
+#     gold = state.global_env["gold"].as_bool
+#     gem = state.global_env["gem"].as_bool
+#     attacked = state.global_env["attacked"].as_bool
+#     required_gold = state.global_env["required_gold"].as_int
+#     required_gem = state.global_env["required_gem"].as_int
+#
+#     return (x == 3) and (y == 1) and (required_gold == 0) and (required_gem == 0)

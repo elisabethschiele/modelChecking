@@ -4,7 +4,7 @@ import numpy as np
 from momba import engine, jani
 import pathlib
 import decision_tree
-from src.Implementation.rewards import get_immediate_reward
+from src.Implementation.rewards import get_immediate_reward#, episode_finished
 
 
 def get_initial_state(model_path):
@@ -35,7 +35,7 @@ def CQI(model_path,
         gamma=0.99,  # const for the Bellman equation
         alpha=0.01,  # const for the Bellman equation
         d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
-        num_of_episodes=10):
+        num_of_episodes=20):
     initial_state = get_initial_state(model_path)
     # print(initial_state.global_env)
     # print(type(initial_state))
@@ -52,21 +52,22 @@ def CQI(model_path,
     #     action_names.append(action.action.action_type.label)
 
     tree = decision_tree.DecisionTree(initial_state, lows, highs, action_names)
-    new_state = initial_state
 
     # TODO: switch to episode_done = episode_done(new_state)
 
 
     h_s = H_s
-    j = 0
+
     for i in range(num_of_episodes):
+        new_state = initial_state
         print("****************")
         print("Episode "+str(i+1))
         print("****************")
         episode_done = False
+        j = 0
         while not episode_done:
-            print("Iteration "+str(j+1))
-            print("Struct"+tree.structure())
+            print("Ep. "+str(i+1)+", Iter. "+str(j+1))
+            # print("Struct"+tree.structure())
             # st ← current state at timestep t;
             current_state = new_state
 
@@ -97,9 +98,12 @@ def CQI(model_path,
             #     h_s = h_s * D
 
             j = j + 1
-            if j == 10:
-                episode_done = True
-                j = 0
+            # if j == 4:
+            #     episode_done = True
+            #     j = 0
+
+            episode_done = episode_finished(new_state)
+            print(f"episode_done {episode_done}")
 
 
 def take_action(current_state, epsilon, tree):
@@ -120,6 +124,7 @@ def take_action(current_state, epsilon, tree):
     print("selected action: " + action.action.action_type.label)
     new_state = action.destinations.pick().state
     reward = get_immediate_reward(current_state, new_state)
+    print(f"reward {reward}")
     print("state: " + str(new_state.global_env))
     # return action, reward, new_state
     return action_label, reward, new_state
@@ -138,7 +143,7 @@ def get_value(state, variable_name):
     return switch.get(variable_name, None)
 
 
-def episode_done(state):
+def episode_finished(state):
     # episode is done as soon as no more gold or gems are required
     return get_value(state, "required_gold") == 0 and get_value(state, "required_gold") == 0
 

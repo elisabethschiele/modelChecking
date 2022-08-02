@@ -2438,7 +2438,7 @@
             }
         },
         {
-            "initial-value": 1,
+            "initial-value": 0,
             "name": "required_gem",
             "type": {
                 "base": "int",
