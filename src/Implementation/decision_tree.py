@@ -1,9 +1,13 @@
 import operator
 from abc import abstractmethod
+import graphviz
 
 import numpy as np
 
 # from src.Implementation.main import find_action_by_label
+from graphviz import Digraph
+
+node_counter = 0
 
 
 class DecisionTree:
@@ -15,13 +19,15 @@ class DecisionTree:
         self.action_names = action_names
 
         splits = self.generate_splits(lows, highs, action_names)
-        # for split in splits:
-        #     print(str(split))
+        for split in splits:
+            print(str(split))
 
         actions_qs = {} # mapping of actions to Q-values
         for action in action_names:
             actions_qs[action] = 0
         self.root = LeafNode(actions_qs, 1, splits)
+        # self.plot(self.g)
+        # print(self.g.source)
 
 
     def select_action(self, state):
@@ -77,10 +83,11 @@ class DecisionTree:
     def update(self, action, reward, old_state, new_state, episode_done, alpha, gamma, d):
         # TODO: reduce params to necessary
         # target = r + gamma * max(Q(new_state, best_next_action))
-        if episode_done:
-            target = reward
-        else:
-            target = reward + (gamma * max(self.root.get_qs(new_state).items(), key=operator.itemgetter(1))[1])
+        # TODO: do we need this part? (probably not)
+        # if episode_done:
+        #     target = reward
+        # else:
+        target = reward + (gamma * max(self.root.get_qs(new_state).items(), key=operator.itemgetter(1))[1])
 
         self.root.update(action, old_state, target, alpha, gamma, d)
 
@@ -96,6 +103,9 @@ class DecisionTree:
 
     def structure(self):
         return self.root.structure()
+
+    def plot(self, g):
+        self.root.plot(g)
 
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
@@ -167,6 +177,10 @@ class LeafNode(TreeNode):
         self.actions_qs = actions_qs
         self.visits = visits
         self.splits = splits
+        global node_counter
+        self.id = node_counter
+        node_counter += 1
+        # print(f"id {self.id}")
         # print(str(self))
         # print(self.structure())
 
@@ -177,7 +191,14 @@ class LeafNode(TreeNode):
         return f"LNode. actions_qs: {self.actions_qs}, visits: {self.visits}, splits: {splits_str}"
 
     def structure(self):
-        return str(self.actions_qs)
+        best_action = max(self.actions_qs, key=self.actions_qs.get)
+        # print(self.actions_qs)
+        # print(f"best_action: {best_action}")
+        return f"best_action: {best_action}"
+        # return str(self.actions_qs)
+
+    def plot(self,g):
+        g.node(str(self.id), max(self.actions_qs, key=self.actions_qs.get))
 
     def is_leaf(self):
         return True
@@ -231,7 +252,8 @@ class LeafNode(TreeNode):
             # print(f'all left qs are: {split.left_qs}')
             # print(f'action is: {action}')
             # print(f'all action qs for current state are: {self.actions_qs}')
-            # print(f'action value in this state and action is: {self.actions_qs[action]}')
+            # print(f'left q for a\'{split.left_qs[key]}')
+            # print(f'current q for {action}: {self.actions_qs[action]}')
             cl = max(cl_array)
             cr_array = []
             for key in split.right_qs:
@@ -244,6 +266,7 @@ class LeafNode(TreeNode):
             # print(f'{Vp} * ({cl} * {split.left_visits} + {cr} * {split.right_visits}) = {SQ[i]}')
         print(f'SQ = {SQ}')
         bestSplit = self.splits[np.argmax(SQ)]
+        # print(f"bestSplit: {bestSplit}")
         bestValue = max(SQ)
         return bestSplit, bestValue
 
@@ -265,6 +288,9 @@ class Inner_Node(TreeNode):
         self.left_child = left_child
         self.right_child = right_child
         self.visits = visits
+        global node_counter
+        self.id = node_counter
+        node_counter += 1
         # print(str(self))
 
     def __str__(self):
@@ -272,6 +298,14 @@ class Inner_Node(TreeNode):
 
     def structure(self):
         return "{"+str(self.feature)+": "+str(self.value)+" "+self.left_child.structure()+","+self.right_child.structure()+"}"
+
+    def plot(self, g):
+        self.left_child.plot(g)
+        self.right_child.plot(g)
+        g.node(str(self.id), f"{get_feature_name(self.feature)}:{self.value}")
+        g.edge(str(self.id), str(self.left_child.id), label = "<")
+        g.edge(str(self.id), str(self.right_child.id), label = ">")
+
 
     def is_leaf(self):
         return False

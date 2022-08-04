@@ -1,8 +1,10 @@
 import random
 
 import numpy as np
+from graphviz import Digraph
 from momba import engine, jani
 import pathlib
+import graphviz
 import decision_tree
 from src.Implementation.rewards import get_immediate_reward#, episode_finished
 
@@ -27,15 +29,23 @@ def get_initial_state(model_path):
     (initial_state,) = initial_states
     return initial_state
 
-
+# def CQI(model_path,
+#         epsilon=0.5,  # determines amount of randomness in Algorithm 2
+#         H_s=0.99,  # starting threshold for what potential delta_Q is required to trigger a split
+#         D=0.99,  # decay for H_s
+#         gamma=0.99,  # const for the Bellman equation
+#         alpha=0.01,  # const for the Bellman equation 0.01
+#         d=0.99,  # visit decay for Algorithm 4 and Algorithm 5
+#         num_of_episodes=1):
 def CQI(model_path,
         epsilon=0.5,  # determines amount of randomness in Algorithm 2
-        H_s=0.99,  # starting threshold for what potential delta_Q is required to trigger a split
+        H_s=1,  # starting threshold for what potential delta_Q is required to trigger a split
         D=0.99,  # decay for H_s
         gamma=0.99,  # const for the Bellman equation
-        alpha=0.01,  # const for the Bellman equation
+        alpha=0.1,  # const for the Bellman equation 0.01
         d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
-        num_of_episodes=10):
+        num_of_episodes=300,
+        num_of_steps = 10000):
     initial_state = get_initial_state(model_path)
     # print(initial_state.global_env)
     # print(type(initial_state))
@@ -56,47 +66,46 @@ def CQI(model_path,
 
     # TODO: switch to episode_done = episode_done(new_state)
 
-
+    iters_per_episode = []
     h_s = H_s
-    j = 0
+    step = 0
     for i in range(num_of_episodes):
         new_state = initial_state
         print("****************")
         print("Episode "+str(i+1))
         print("****************")
+        print("state: " + str(new_state.global_env))
         episode_done = False
         j = 0
+        #h_s=H_s
         while not episode_done:
+            step += 1
             print("Ep. "+str(i+1)+", Iter. "+str(j+1))
-            # print("Struct"+tree.structure())
+            print("Struct"+tree.structure())
             # st ← current state at timestep t;
             current_state = new_state
 
             # L ← leaf of Tree corresponding to st;
             L = tree.root.get_leaf(current_state)
-            # print("take action\n")
             # at,rt,st+1 ←TakeAction(L);
-            action, reward, new_state = take_action(current_state, epsilon, tree)
-
-            # print("update tree\n")
+            action, reward, new_state = take_action(current_state, epsilon, tree, step, num_of_steps)
             # UpdateLeafQValues(L, at , rt , st+1 );
             # UpdateVisitFrequency(T ree, L);
             # UpdatePossibleSplits(L, st , at , st+1 );
             tree.update(action, reward, current_state, new_state, episode_done, alpha, gamma, d)
-
-            # print("choose best split")
-
             # bestSplit, bestV value ← BestSplit(T ree, L, at)
             best_split, best_value = tree.best_split(current_state, action)
-            print(f"best split: {best_split}")
+            # print(f"best split: {best_split}")
             print(f"best value: {best_value}")
 
             # decide if we split
-            # if best_value > h_s:
+            if best_value > h_s:
                 # split node
-            tree.split_node(current_state, L, best_split)
-            # else:
-            #     h_s = h_s * D
+                tree.split_node(current_state, L, best_split)
+                h_s = H_s
+            else:
+                h_s = h_s * D
+            print(f"h_s {h_s}")
 
             j = j + 1
             # if j == 4:
@@ -104,13 +113,39 @@ def CQI(model_path,
             #     j = 0
 
             episode_done = episode_finished(new_state)
-            print(f"episode_done {episode_done}")
+            if episode_done:
+                iters_per_episode.append(j)
 
+            if step == num_of_steps:#TODO: experiment
+                break
+        if step == num_of_steps:#TODO: experiment
+            break
+    g = Digraph('G', filename='graph.gv')
+    tree.plot(g)
+    print(g.source)
+    print(f'iters per episode: {str(iters_per_episode)}')
+    eps_func = (lambda step: max(0.05, 1 - step / 1e2))
+    print(f'eps_func(1) = {eps_func(1)}')
+    print(f'eps_func(2) = {eps_func(2)}')
+    print(f'eps_func(3) = {eps_func(3)}')
+    print(f'eps_func(4) = {eps_func(4)}')
+    print(f'eps_func(5) = {eps_func(5)}')
+    print(f'eps_func(6) = {eps_func(6)}')
+    print(f'eps_func(7) = {eps_func(7)}')
+    print(f'eps_func(8) = {eps_func(8)}')
+    print(f'eps_func(10) = {eps_func(10)}')
+    print(f'eps_func(100) = {eps_func(100)}')
+    # print(f'eps_func(1000) = {eps_func(1000)}')
+    # print(f'eps_func(10000) = {eps_func(10000)}')
+    # print(f'eps_func(50000) = {eps_func(50000)}')
 
-def take_action(current_state, epsilon, tree):
-    print("state: " + str(current_state.global_env))
+def take_action(current_state, epsilon, tree, step, num_of_steps):
+
     action = None
-    if np.random.random() < epsilon:
+    eps_func = (lambda step: max(0.05, 1 - step / (num_of_steps)))
+    print(f'prob_random {step} = {eps_func(step)}')
+    # if np.random.random() < epsilon:
+    if np.random.random() < eps_func(step):
         print("selected action randomly")
         action = random.choice(current_state.transitions)
         action_label = action.action.action_type.label
