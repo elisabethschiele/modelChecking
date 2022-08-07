@@ -1,6 +1,6 @@
-REW_GOLD = 10
-REW_GEM = 0
-REW_ATTACKED = -10
+REW_GOLD = 1000
+REW_GEM = 1000
+REW_ATTACKED = -1000
 
 
 def get_immediate_reward(old_state, new_state):
