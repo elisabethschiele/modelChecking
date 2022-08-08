@@ -12,12 +12,13 @@ leaf_counter = 0
 
 
 class DecisionTree:
-    def __init__(self, initial_state, lows, highs, action_names):
+    def __init__(self, initial_state, lows, highs, action_names, var_labels):
 
         self.initial_state = initial_state
         self.lows = lows
         self.highs = highs
         self.action_names = action_names
+        self.var_labels = var_labels
 
         splits = self.generate_splits(lows, highs, action_names)
         # for split in splits:
@@ -26,7 +27,7 @@ class DecisionTree:
         actions_qs = {} # mapping of actions to Q-values
         for action in action_names:
             actions_qs[action] = 0
-        self.root = LeafNode(actions_qs, 1, splits)
+        self.root = LeafNode(actions_qs, 1, splits, self.var_labels)
         # self.plot(self.g)
         # print(self.g.source)
 
@@ -68,26 +69,20 @@ class DecisionTree:
                                     right_qs,
                                     left_qs,
                                     0.5,
-                                    0.5))
+                                    0.5, self.var_labels))
 
-        # generate two splits per feature: one at 1/3 distance between min and max and one at 2/3
-        # for f in range(len(lows)):
-        #     for i in range(4):
-        #         splits.append(Split(f,
-        #                             lows[f] + (highs[f] - lows[f]) / 5 * (i + 1),
-        #                             np.zeros(total_actions),
-        #                             np.zeros(total_actions),
-        #                             0.5,
-        #                             0.5))
         return splits
 
     def update(self, action, reward, old_state, new_state, episode_done, alpha, gamma, d):
         # TODO: reduce params to necessary
         # target = r + gamma * max(Q(new_state, best_next_action))
+
         # TODO: do we need this part? (probably not)
         # if episode_done:
         #     target = reward
         # else:
+
+
         target = reward + (gamma * max(self.root.get_qs(new_state).items(), key=operator.itemgetter(1))[1])
 
         self.root.update(action, old_state, target, alpha, gamma, d)
@@ -113,23 +108,24 @@ class DecisionTree:
         return leaf_counter
 
 class Split():
-    def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
+    def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits, var_labels):
         self.feature = feature # index of state variable
         self.value = value
         self.left_qs = left_qs
         self.right_qs = right_qs
         self.left_visits = left_visits
         self.right_visits = right_visits
+        self.var_labels = var_labels
 
     def __str__(self):
-        return f"feature: {get_feature_name(self.feature)}, value: {self.value}, left_qs: {self.left_qs}, right_qs: {self.right_qs}, left_visits: {self.left_visits}, right_visits {self.right_visits}"
+        return f"feature: {self.var_labels[self.feature]}, value: {self.value}, left_qs: {self.left_qs}, right_qs: {self.right_qs}, left_visits: {self.left_visits}, right_visits {self.right_visits}"
 
 
 
     def update(self, action, old_state, target, alpha, gamma, d):
         # feature 0 corresponds to x, feature 1 - to y
         # TODO: generalize - DONE
-        feature_label = get_feature_name(self.feature)
+        feature_label = self.var_labels[self.feature]
 
         if old_state.global_env[feature_label].as_int < self.value:
             self.left_qs[action] = (1 - alpha) * self.left_qs[action] + alpha * target
@@ -178,7 +174,7 @@ class TreeNode:
 
 class LeafNode(TreeNode):
 
-    def __init__(self, actions_qs, visits, splits):
+    def __init__(self, actions_qs, visits, splits, var_labels):
         self.actions_qs = actions_qs
         self.visits = visits
         self.splits = splits
@@ -187,6 +183,7 @@ class LeafNode(TreeNode):
         node_counter += 1
         global leaf_counter
         leaf_counter += 1
+        self.var_labels = var_labels
         # print(f"id {self.id}")
         # print(str(self))
         # print(self.structure())
@@ -241,9 +238,9 @@ class LeafNode(TreeNode):
         Rv = best_split.right_visits
         Rq = best_split.right_qs
 
-        Left_Child = LeafNode(Lq, Lv, left_splits)
-        Right_Child = LeafNode(Rq, Rv, right_splits)
-        B = Inner_Node(Bu, Bm, Left_Child, Right_Child, Bv)
+        Left_Child = LeafNode(Lq, Lv, left_splits, self.var_labels)
+        Right_Child = LeafNode(Rq, Rv, right_splits, self.var_labels)
+        B = Inner_Node(Bu, Bm, Left_Child, Right_Child, Bv, self.var_labels)
         global leaf_counter
         leaf_counter -= 1
         return B
@@ -291,7 +288,7 @@ class LeafNode(TreeNode):
 class Inner_Node(TreeNode):
     #"branching node" in the paper
 
-    def __init__(self, feature, value, left_child, right_child, visits):
+    def __init__(self, feature, value, left_child, right_child, visits, var_labels):
         self.feature = feature
         self.value = value
         self.left_child = left_child
@@ -301,6 +298,7 @@ class Inner_Node(TreeNode):
         self.id = node_counter
         node_counter += 1
         # print(str(self))
+        self.var_labels = var_labels
 
     def __str__(self):
         return f"BNode. feature: {self.feature}, value: {self.value}, visits: {self.visits}"
@@ -311,7 +309,7 @@ class Inner_Node(TreeNode):
     def plot(self, g):
         self.left_child.plot(g)
         self.right_child.plot(g)
-        g.node(str(self.id), f"{get_feature_name(self.feature)}:{self.value}")
+        g.node(str(self.id), f"{self.var_labels[self.feature]}:{self.value}")
         g.edge(str(self.id), str(self.left_child.id), label = "<")
         g.edge(str(self.id), str(self.right_child.id), label = ">")
 
@@ -326,7 +324,7 @@ class Inner_Node(TreeNode):
     def select_child(self, state):
         # selects the child that corresponds to the state
         # TODO: generalize - Done
-        feature_label = get_feature_name(self.feature)
+        feature_label = self.var_labels[self.feature]
 
         if state.global_env[feature_label].as_int < self.value:
             return self.left_child, self.right_child
@@ -347,7 +345,7 @@ class Inner_Node(TreeNode):
 
     def split_node(self, old_state, L, best_split, left_splits, right_splits):
         # TODO: generalize - Done
-        feature_label = get_feature_name(self.feature)
+        feature_label = self.var_labels[self.feature]
 
         if old_state.global_env[feature_label].as_int < self.value:
             self.left_child = self.left_child.split_node(old_state, L, best_split, left_splits, right_splits)
@@ -359,19 +357,3 @@ class Inner_Node(TreeNode):
         # returns values of all visits from root to leaf corresponding to state
         return self.visits * self.select_child(state)[0].get_vs(state)
 
-def get_feature_name(index):
-        if index == 0: 
-            return "x"
-        if index == 1: 
-            return "y"
-        if index == 2: 
-            return "required_gold"
-        if index == 3: 
-            return "required_gem"
-        if index == 4: 
-            return "gold"
-        if index == 5: 
-            return "gem"
-        if index == 6: 
-            return "attacked"
-        return "none"
