@@ -8,8 +8,40 @@ import graphviz
 from scipy import stats
 import decision_tree
 import decision_tree_old
-from src.Implementation.rewards import get_immediate_reward#, episode_finished
+from resources_rewards import get_immediate_reward#, episode_finished
 
+import json
+
+def get_actions(file_path):
+    labels = []
+    with open(file_path, encoding="utf-8") as json_data:
+        data = json.load(json_data)
+        for key in data["actions"]:
+            labels.append(key["name"])
+    return labels
+
+def get_lows_highs(file_path):
+    # currently works with exclusively bool, real and int variables
+
+    lows = []
+    highs = []
+    var_labels = []
+    with open(file_path, encoding="utf-8") as json_data:
+        data = json.load(json_data)
+        for key in data["variables"]:
+            print(key)
+            if key["type"] == "bool":
+                print("detected bool")
+                lows.append(0)
+                highs.append(1)
+                var_labels.append(key["name"])
+            elif key["type"] == "real":
+                pass
+            else:
+                lows.append(key["type"]["lower-bound"])
+                highs.append(key["type"]["upper-bound"])
+                var_labels.append(key["name"])
+    return lows, highs, var_labels
 
 def get_initial_state(model_path):
     path = pathlib.Path(model_path)
@@ -51,16 +83,23 @@ def CQI(model_path,
     # for boolean: Low = 0 = False
     # High = 1 = True
     # x, y, req_gold, req_gem, gold, gem, attacked
-    lows = [1, 1, 0, 0, 0, 0, 0]  # array of the lowest values of model variables
-    highs = [5, 5, 5, 3, 1, 1, 1]  # array of the highest values of model variables
+    # lows = [1, 1, 0, 0, 0, 0, 0]  # array of the lowest values of model variables
+    # highs = [5, 5, 5, 3, 1, 1, 1]  # array of the highest values of model variables
 
-    # total_actions = 4  # total number of actions in the model
-    action_names = ["left", "right", "top", "down"]  # all actions
-    # TODO: (optional) function that returns all actions present in the model
-    # for action in initial_state.transitions:
-    #     action_names.append(action.action.action_type.label)
+    lows, highs, var_labels = get_lows_highs(model_path)
 
-    tree = decision_tree.DecisionTree(initial_state, lows, highs, action_names)
+    # for this specific model we do not want the variable "success" o have an impact on our training
+    lows.pop(0)
+    highs.pop(0)
+    var_labels.pop(0)
+
+    print(lows)
+    print(highs)
+    print(var_labels)
+
+    action_names = get_actions(model_path)  # all actions
+
+    tree = decision_tree.DecisionTree(initial_state, lows, highs, action_names, var_labels)
     new_state = initial_state
 
     # TODO: switch to episode_done = episode_done(new_state)
@@ -515,9 +554,9 @@ def take_action_old(current_state, epsilon, tree, step, num_of_steps):
     # return action, reward, new_state, random_action
     return action_label, reward, new_state, random_action
 
-# CQI("../Testing/models/resource-working-model.jani")
+CQI("../Testing/models/resources_parsed_fully.jani")
 # Old_Alg("../Testing/models/resource-working-model.jani")
 # CQI("../testing/models/resource-gathering_parsed.jani")
 
 # save_full_stats_res_gath("../testing/Simulations/full_stats_res_gath.txt", 10, CQI)
-save_full_stats_res_gath("../testing/Simulations/full_stats_res_gath_old_alg.txt", 10, Old_Alg)
+# save_full_stats_res_gath("../testing/Simulations/full_stats_res_gath_old_alg.txt", 10, Old_Alg)

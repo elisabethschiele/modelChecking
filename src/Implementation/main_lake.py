@@ -1,3 +1,4 @@
+from asyncore import file_dispatcher
 import random
 
 import numpy as np
@@ -6,6 +7,41 @@ from momba import engine, jani
 import pathlib
 import lake_decision_tree
 from lake_rewards import get_immediate_reward #, episode_finished
+import json
+
+def get_actions(file_path):
+    labels = []
+    with open(file_path, encoding="utf-8") as json_data:
+        data = json.load(json_data)
+        for key in data["actions"]:
+            labels.append(key["name"])
+    return labels
+
+# print(get_actions("/Users/elisabeth/Desktop/model checking/modelChecking/src/Testing/models/lake.jani"))
+
+def get_lows_highs(file_path):
+    # currently works with exclusively bool, real and int variables
+    lows = []
+    highs = []
+    var_labels = []
+    with open(file_path, encoding="utf-8") as json_data:
+        data = json.load(json_data)
+        for key in data["variables"]:
+            print(key)
+            if key["type"] == "bool":
+                print("detected bool")
+                lows.append(0)
+                highs.append(1)
+                var_labels.append(key["name"])
+            elif key["type"] == "real":
+                pass
+            else:
+                lows.append(key["type"]["lower-bound"])
+                highs.append(key["type"]["upper-bound"])
+                var_labels.append(key["name"])
+    return lows, highs, var_labels
+
+# print(get_lows_highs("/Users/elisabeth/Desktop/model checking/modelChecking/src/Testing/models/lake.jani"))
 
 def get_initial_state(model_path):
     # DONE
@@ -31,18 +67,20 @@ def CQI(model_path,
         gamma=0.99,  # const for the Bellman equation
         alpha=0.1,  # const for the Bellman equation 0.01
         d=0.99999,  # visit decay for Algorithm 4 and Algorithm 5
-        num_of_episodes=2000,
-        num_of_steps = 60000):
+        num_of_episodes=2000, # 2000
+        num_of_steps = 60000): # 60000
     initial_state = get_initial_state(model_path)
     print(f'number of episodes is {num_of_episodes}')
 
-   
-    lows = [0, 0]  # array of the lowest values of model variables
-    highs = [5, 5]  # array of the highest values of model variables
+    lows, highs, var_labels = get_lows_highs(model_path)
+    # print(lows)
+    # print(highs)
+    # lows = [0, 0]  # array of the lowest values of model variables
+    # highs = [5, 5]  # array of the highest values of model variables
 
-    action_names = ["e", "n", "s", "w"]  # all actions
+    action_names = get_actions(model_path)  # all actions
    
-    tree = lake_decision_tree.DecisionTree(initial_state, lows, highs, action_names)
+    tree = lake_decision_tree.DecisionTree(initial_state, lows, highs, action_names, var_labels)
     new_state = initial_state
 
     iters_per_episode = []
