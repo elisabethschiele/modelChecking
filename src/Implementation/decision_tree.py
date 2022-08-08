@@ -7,9 +7,9 @@ import numpy as np
 # from src.Implementation.main import find_action_by_label
 from graphviz import Digraph
 
-node_counter = 0
+id_counter = 0
 leaf_counter = 0
-
+node_counter = 0
 
 class DecisionTree:
     def __init__(self, initial_state, lows, highs, action_names):
@@ -112,6 +112,22 @@ class DecisionTree:
         global leaf_counter
         return leaf_counter
 
+    def get_total_nodes(self):
+        global node_counter
+        return node_counter
+
+    def reinit_leaves(self):
+        global leaf_counter
+        leaf_counter = 0
+
+    def reinit_nodes(self):
+        global node_counter
+        node_counter = 0
+
+    def reinit_ids(self):
+        global id_counter
+        id_counter = 0
+
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
         self.feature = feature # index of state variable
@@ -182,11 +198,13 @@ class LeafNode(TreeNode):
         self.actions_qs = actions_qs
         self.visits = visits
         self.splits = splits
-        global node_counter
-        self.id = node_counter
-        node_counter += 1
+        global id_counter
+        self.id = id_counter
+        id_counter += 1
         global leaf_counter
         leaf_counter += 1
+        global node_counter
+        node_counter += 1
         # print(f"id {self.id}")
         # print(str(self))
         # print(self.structure())
@@ -297,9 +315,9 @@ class Inner_Node(TreeNode):
         self.left_child = left_child
         self.right_child = right_child
         self.visits = visits
-        global node_counter
-        self.id = node_counter
-        node_counter += 1
+        global id_counter
+        self.id = id_counter
+        id_counter += 1
         # print(str(self))
 
     def __str__(self):

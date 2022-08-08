@@ -3,12 +3,17 @@ from abc import abstractmethod
 import graphviz
 from scipy import stats
 import math
+#TODO: warnings
+import warnings
+warnings.filterwarnings("ignore")
 
 import numpy as np
 
 # from src.Implementation.main import find_action_by_label
 from graphviz import Digraph
 
+id_counter = 0
+leaf_counter = 0
 node_counter = 0
 
 
@@ -34,8 +39,8 @@ class DecisionTreeOld:
 
     def select_action(self, state):
         # select action with highest q value among those that are allowed
-        print(f'selecting best action for state {state.global_env}')
-        print(f'action values: {self.root.get_qs(state).items()}')
+        # print(f'selecting best action for state {state.global_env}')
+        # print(f'action values: {self.root.get_qs(state).items()}')
         sorted_by_q = dict(sorted(self.root.get_qs(state).items(), key=lambda item: item[1], reverse=True))
         for key in sorted_by_q:
             if self.find_action_by_label(state, key) != -1:
@@ -46,7 +51,7 @@ class DecisionTreeOld:
         for action in state.transitions:
             if action.action.action_type.label == label:
                 return action
-        print("No action found matching label " + label)
+        # print("No action found matching label " + label)
         return -1
 
     def generate_splits(self, lows, highs, action_names):
@@ -105,6 +110,26 @@ class DecisionTreeOld:
 
     def plot(self, g):
         self.root.plot(g)
+
+    def get_total_leaves(self):
+        global leaf_counter
+        return leaf_counter
+
+    def get_total_nodes(self):
+        global node_counter
+        return node_counter
+
+    def reinit_leaves(self):
+        global leaf_counter
+        leaf_counter = 0
+
+    def reinit_nodes(self):
+        global node_counter
+        node_counter = 0
+
+    def reinit_ids(self):
+        global id_counter
+        id_counter = 0
 
 class Split():
     def __init__(self, feature, value, left_qs, right_qs, left_visits, right_visits):
@@ -179,14 +204,18 @@ class LeafNode(TreeNode):
         self.actions_qs = actions_qs
         self.visits = visits
         self.splits = splits
-        global node_counter
-        self.id = node_counter
+        global id_counter
+        self.id = id_counter
         self.visited_states = []
         self.delta_q_hist = []
-        node_counter += 1
+        id_counter += 1
         # print(f"id {self.id}, delta_q_hist {self.delta_q_hist}")
         # print(str(self))
         # print(self.structure())
+        global leaf_counter
+        leaf_counter += 1
+        global node_counter
+        node_counter += 1
 
     def __str__(self):
         splits_str = "\n"
@@ -219,11 +248,11 @@ class LeafNode(TreeNode):
         # print("action_val: "+str(self.actions_qs[action]))
 
         # target = reward + (gamma * max(self.actions_qs.items(), key=operator.itemgetter(1))[1])
-        print(f'target: {target}')
+        # print(f'target: {target}')
 
         updated_q_value = (1 - alpha) * self.actions_qs[action] + alpha * target
         delta_q = updated_q_value - self.actions_qs[action]
-        print(f'old q value for {action}: {self.actions_qs[action]}, new: {updated_q_value}, q_vals: {self.actions_qs}')
+        # print(f'old q value for {action}: {self.actions_qs[action]}, new: {updated_q_value}, q_vals: {self.actions_qs}')
         self.actions_qs[action] = updated_q_value
 
         split = False
@@ -233,12 +262,12 @@ class LeafNode(TreeNode):
             # add delta(Q) to the history list
             self.delta_q_hist.append(delta_q)
             self.visited_states.append(old_state)
-            print(f'{old_state.global_env}, delta_q: {delta_q}')
-            print(f'hist_list for id {self.id}: {self.delta_q_hist}')
+            # print(f'{old_state.global_env}, delta_q: {delta_q}')
+            # print(f'hist_list for id {self.id}: {self.delta_q_hist}')
             if len(self.delta_q_hist) >= hist_min_size:
                 avg = sum(self.delta_q_hist) / len (self.delta_q_hist)
                 std_dev = np.std(self.delta_q_hist)
-                print(f'avg: {avg}, std_dev: {std_dev}')
+                # print(f'avg: {avg}, std_dev: {std_dev}')
                 if abs(avg) < 2 * std_dev:
                     split = True
 
@@ -257,9 +286,9 @@ class LeafNode(TreeNode):
     def split_node(self, old_state, L, left_splits, right_splits):
 
         # determine the split with the highest T statistic
-        print("VISITED STATES")
-        for i in range(len(self.visited_states)):
-            print(f'{self.visited_states[i].global_env}, delta_q: {self.delta_q_hist[i]}')
+        # print("VISITED STATES")
+        # for i in range(len(self.visited_states)):
+        #     print(f'{self.visited_states[i].global_env}, delta_q: {self.delta_q_hist[i]}')
         max_t = 0
         best_split = None
         for split in self.splits:
@@ -274,8 +303,11 @@ class LeafNode(TreeNode):
                 else:
                     delta_q_right.append(self.delta_q_hist[i])
 
+            # if len(delta_q_left) == 0 or len(delta_q_right) == 0: # TODO: precision loss error, division by 0
+            #     return self
+
             t_stat = stats.ttest_ind(delta_q_left, delta_q_right)
-            print("t_stat "+str(t_stat.statistic) + str(math.isnan(t_stat.statistic)))
+            # print("t_stat "+str(t_stat.statistic) + str(math.isnan(t_stat.statistic)))
             # TODO: do we need abs() and not NaN here?
             if abs(t_stat.statistic) > max_t and not math.isnan(t_stat.statistic):
                 best_split = split
@@ -290,13 +322,13 @@ class LeafNode(TreeNode):
             #     if curr_t > max_t:
             #         best_split = split
             #         max_t = curr_t
-            print(f'feat {feat}, val {val}')
-            print(f'delta_q_left: {delta_q_left}')
-            print(f'delta_q_right: {delta_q_right}')
+            # print(f'feat {feat}, val {val}')
+            # print(f'delta_q_left: {delta_q_left}')
+            # print(f'delta_q_right: {delta_q_right}')
         if best_split is None:
             return self
 
-        print(f'best split: {str(best_split)}')
+        # print(f'best split: {str(best_split)}')
 
         Bv = self.visits
         Bu = best_split.feature
@@ -310,6 +342,9 @@ class LeafNode(TreeNode):
         Left_Child = LeafNode(Lq, Lv, left_splits)
         Right_Child = LeafNode(Rq, Rv, right_splits)
         B = Inner_Node(Bu, Bm, Left_Child, Right_Child, Bv)
+
+        global leaf_counter
+        leaf_counter -= 1
         return B
 
     def best_split(self, Tree, state, action):
@@ -337,7 +372,7 @@ class LeafNode(TreeNode):
             # print(f'length of SQ = {len(SQ)}')
 
             # print(f'{Vp} * ({cl} * {split.left_visits} + {cr} * {split.right_visits}) = {SQ[i]}')
-        print(f'SQ = {SQ}')
+        # print(f'SQ = {SQ}')
         bestSplit = self.splits[np.argmax(SQ)]
         # print(f"bestSplit: {bestSplit}")
         bestValue = max(SQ)
@@ -361,9 +396,9 @@ class Inner_Node(TreeNode):
         self.left_child = left_child
         self.right_child = right_child
         self.visits = visits
-        global node_counter
-        self.id = node_counter
-        node_counter += 1
+        global id_counter
+        self.id = id_counter
+        id_counter += 1
         # print(str(self))
 
     def __str__(self):

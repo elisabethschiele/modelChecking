@@ -50,9 +50,9 @@ def CQI(model_path,
     step = 0
     for i in range(num_of_episodes):
         new_state = initial_state
-        print("****************")
+        # print("****************")
         print("Episode "+str(i+1))
-        print("****************")
+        # print("****************")
         # print("state: " + str(new_state.global_env))
         episode_done = False
         j = 0
@@ -158,5 +158,5 @@ def find_action_by_label(state, label):
     print("No action found matching label " + label)
     return -1
 
-CQI("/Users/elisabeth/Desktop/model checking/modelChecking/src/Testing/models/lake.jani")
+CQI("../Testing/models/lake.jani")
 

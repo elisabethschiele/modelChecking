@@ -5,7 +5,7 @@ import numpy as np
 # from src.Implementation.main import find_action_by_label
 from graphviz import Digraph
 
-node_counter = 0
+id_counter = 0
 
 
 class DecisionTree:
@@ -162,7 +162,7 @@ class LeafNode(TreeNode):
         self.actions_qs = actions_qs
         self.visits = visits
         self.splits = splits
-        global node_counter
+        global id_counter
         self.id = node_counter
         node_counter += 1
 
@@ -273,7 +273,7 @@ class Inner_Node(TreeNode):
         self.left_child = left_child
         self.right_child = right_child
         self.visits = visits
-        global node_counter
+        global id_counter
         self.id = node_counter
         node_counter += 1
         # print(str(self))

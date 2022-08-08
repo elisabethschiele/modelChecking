@@ -37,13 +37,13 @@ def get_initial_state(model_path):
 #         num_of_episodes=1):
 def CQI(model_path,
         epsilon=0.5,  # determines amount of randomness in Algorithm 2
-        H_s=1,  # starting threshold for what potential delta_Q is required to trigger a split
-        D=0.999,  # decay for H_s
-        gamma=0.99,  # const for the Bellman equation
+        H_s=8,  # starting threshold for what potential delta_Q is required to trigger a split
+        D=0.9999,  # decay for H_s
+        gamma=0.8,  # const for the Bellman equation 0.99
         alpha=0.1,  # const for the Bellman equation 0.01
         d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
-        num_of_episodes=5000,
-        num_of_steps = 500000):
+        num_of_episodes=10000,
+        num_of_steps = 1000000):
     initial_state = get_initial_state(model_path)
     # print(initial_state.global_env)
     # print(type(initial_state))
@@ -68,6 +68,7 @@ def CQI(model_path,
     iters_per_episode = []
     avg_reward_per_episode = []
     leaf_count = []
+    node_count = []
     h_s = H_s
     step = 0
     for i in range(num_of_episodes):
@@ -92,7 +93,7 @@ def CQI(model_path,
             # L ← leaf of Tree corresponding to st;
             L = tree.root.get_leaf(current_state)
             # at,rt,st+1 ←TakeAction(L);
-            action, reward, new_state = take_action(current_state, epsilon, tree, step, num_of_steps)
+            action, reward, new_state = take_action(current_state, epsilon, tree, step, num_of_steps, True)
             total_episode_reward += reward
             # UpdateLeafQValues(L, at , rt , st+1 );
             # UpdateVisitFrequency(T ree, L);
@@ -107,6 +108,7 @@ def CQI(model_path,
             if best_value > h_s:
                 # split node
                 tree.split_node(current_state, L, best_split)
+                # print("SPLIT!")
                 h_s = H_s
             else:
                 h_s = h_s * D
@@ -122,6 +124,7 @@ def CQI(model_path,
                 iters_per_episode.append(j)
                 avg_reward_per_episode.append(total_episode_reward / j)
                 leaf_count.append(tree.get_total_leaves())
+                node_count.append(tree.get_total_nodes())
                 # if j < 12:
                 #     raise IndexError
 
@@ -140,37 +143,120 @@ def CQI(model_path,
     print(f'iters per episode: {str(iters_per_episode)}')
     print(f'avg reward per episode: {avg_reward_per_episode}')
     print(f'total leaves per episode: {leaf_count}')
+    print(f'total nodes per episode: {node_count}')
+    print(f'tot. leaves/pos. leaves: {tree.get_total_leaves()}/{total_possible_leaves(lows, highs)}')
+    print(f'tot. nodes: {tree.get_total_nodes()}')
+
+    # TODO: replace with parameters
+    tree.reinit_nodes()
+    tree.reinit_leaves()
+    tree.reinit_ids()
+
+    # STATS
+    # save_stat_avg_reward("../Testing/Simulations/avg_rewards.txt", avg_reward_per_episode)
+
+
+
+    # evaluate(model_path, tree, initial_state, D, gamma, alpha, d, num_of_episodes, num_of_steps)
+
+    return iters_per_episode, avg_reward_per_episode, leaf_count, node_count
+
+
+def evaluate(model_path,
+        tree,
+        initial_state,
+        H_s=8,  # starting threshold for what potential delta_Q is required to trigger a split
+        D=0.9999,  # decay for H_s
+        gamma=0.8,  # const for the Bellman equation 0.99
+        alpha=0.1,  # const for the Bellman equation 0.01
+        d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
+        num_of_episodes=10000,
+        num_of_steps = 50000,
+        ):
+    epsilon = 0.05
+
+    lows = [1, 1, 0, 0, 0, 0, 0]  # array of the lowest values of model variables
+    highs = [5, 5, 5, 3, 1, 1, 1]  # array of the highest values of model variables
+
+    action_names = ["left", "right", "top", "down"]  # all actions
+
+    new_state = initial_state
+
+    # TODO: switch to episode_done = episode_done(new_state)
+    iters_per_episode = []
+    avg_reward_per_episode = []
+    leaf_count = []
+    node_count = []
+    h_s = H_s
+    step = 0
+    for i in range(num_of_episodes):
+        new_state = initial_state
+        print("Episode "+str(i+1))
+        episode_done = False
+        j = 0
+        h_s=H_s
+
+        total_episode_reward = 0
+
+        while not episode_done:
+            step += 1
+            # print("Ep. "+str(i+1)+", Iter. "+str(j+1))
+
+            current_state = new_state
+
+            L = tree.root.get_leaf(current_state)
+            action, reward, new_state = take_action(current_state, epsilon, tree, step, num_of_steps, False)
+            total_episode_reward += reward
+            j = j + 1
+
+            episode_done = episode_finished(new_state)
+            if episode_done:
+                iters_per_episode.append(j)
+                avg_reward_per_episode.append(total_episode_reward / j)
+                leaf_count.append(tree.get_total_leaves())
+                node_count.append(tree.get_total_nodes())
+                # if j < 12:
+                #     raise IndexError
+
+            if tree.get_total_leaves() == 1000:
+                break
+
+            if step == num_of_steps:
+                break
+        if step == num_of_steps:
+            break
+        if tree.get_total_leaves() == 1000:
+            break
+
+
+    g = Digraph('G', filename='graph.gv')
+    tree.plot(g)
+    print(g.source)
+    print(f'iters per episode: {str(iters_per_episode)}')
+    print(f'avg reward per episode: {avg_reward_per_episode}')
+    print(f'total leaves per episode: {leaf_count}')
     print(f'tot. leaves/pos. leaves: {tree.get_total_leaves()}/{total_possible_leaves(lows, highs)}')
 
     # STATS
-    save_stat_avg_reward("../Testing/Simulations/avg_rewards.txt", avg_reward_per_episode)
+    save_avg_stats_res_gath("../Testing/Simulations/resource_gath_1.txt", avg_reward_per_episode, iters_per_episode, leaf_count, node_count)
 
 
 
 
-    eps_func = (lambda step: max(0.1, 1 - step / 2 * 1e2))
-    # print(f'eps_func(1) = {eps_func(1)}')
-    # print(f'eps_func(2) = {eps_func(2)}')
-    # print(f'eps_func(3) = {eps_func(3)}')
-    # print(f'eps_func(4) = {eps_func(4)}')
-    # print(f'eps_func(5) = {eps_func(5)}')
-    # print(f'eps_func(6) = {eps_func(6)}')
-    # print(f'eps_func(7) = {eps_func(7)}')
-    # print(f'eps_func(8) = {eps_func(8)}')
-    # print(f'eps_func(10) = {eps_func(10)}')
-    # print(f'eps_func(100) = {eps_func(100)}')
-    # print(f'eps_func(1000) = {eps_func(1000)}')
-    # print(f'eps_func(10000) = {eps_func(10000)}')
-    # print(f'eps_func(50000) = {eps_func(50000)}')
+def take_action(current_state, epsilon, tree, step, num_of_steps, epsilon_decaying):
 
-def take_action(current_state, epsilon, tree, step, num_of_steps):
-
-    action = None
-    # eps_func = (lambda step: max(0, 1 - step / (num_of_steps)))
+    # action = None
     eps_func = (lambda step: max(0.05, 1 - step / (num_of_steps)))
-    # print(f'prob_random {step} = {eps_func(step)}')
+    if epsilon_decaying:
+        prob_random = eps_func(step)
+    else:
+        prob_random = epsilon
+    eps_func = (lambda step: max(0, 1 - step / (num_of_steps)))
+
+    # print(f'prob_random {step} = {prob_random}')
     # if np.random.random() < epsilon:
-    if np.random.random() < eps_func(step):
+    # if np.random.random() < eps_func(step):
+    if np.random.random() < prob_random:
         # print("selected action randomly")
         action = random.choice(current_state.transitions)
         action_label = action.action.action_type.label
@@ -223,48 +309,127 @@ def total_possible_leaves(lows, highs):
         total *= highs[i] - lows[i] + 1
     return total
 
-def save_stat_avg_reward(filename, avg_reward):
-    f = open(filename, "w")
-    for i in range(len(avg_reward)):
-        f.write(str(i+1)+" "+str(avg_reward[i])+"\n")
+def save_avg_stats_res_gath(filename, avg_reward_per_episode, iters_per_episode, leaf_count, node_count):
+    pass
 
+
+    # f = open(filename, "w")
+    # for i in range(len(avg_reward)):
+    #     f.write(str(i+1)+" "+str(avg_reward[i])+"\n")
+
+def save_full_stats_res_gath(filename, runs, algorithm):
+
+    arr_iters_per_episode = []
+    arr_avg_reward_per_episode = []
+    arr_leaf_count = []
+    arr_node_count = []
+
+    i = runs
+    not_converged = 0
+    while i != 0:
+        iters_per_episode, avg_reward_per_episode, leaf_count, node_count = algorithm("../Testing/models/resource-working-model.jani")
+
+        print(f'converged: {alg_converged(iters_per_episode)}')
+        # check for convergence:
+        if not alg_converged(iters_per_episode):
+            not_converged +=1
+            continue
+
+        arr_iters_per_episode.append(iters_per_episode)
+        arr_avg_reward_per_episode.append(avg_reward_per_episode)
+        arr_leaf_count.append(leaf_count)
+        arr_node_count.append(node_count)
+        i -= 1
+
+
+    min_size = min(map(len, arr_iters_per_episode))
+    avg_iters_per_episode = []
+    avg_avg_reward_per_episode = []
+    avg_leaf_count = []
+    avg_node_count = []
+
+    print(f'min_size: {min_size}')
+
+    for i in range(min_size):
+        sum_iter = 0
+        sum_reward = 0
+        sum_leaves = 0
+        sum_nodes = 0
+        for j in range(runs):
+            sum_iter += arr_iters_per_episode[j][i]
+            sum_reward += arr_avg_reward_per_episode[j][i]
+            sum_leaves += arr_leaf_count[j][i]
+            sum_nodes += arr_node_count[j][i]
+        avg_iters_per_episode.append(sum_iter / runs)
+        avg_avg_reward_per_episode.append(sum_reward / runs)
+        avg_leaf_count.append(sum_leaves / runs)
+        avg_node_count.append(sum_nodes / runs)
+
+    print(f'size_1 {len(arr_iters_per_episode[0])}, size_2 {len(arr_iters_per_episode[1])}, size_3 {len(arr_iters_per_episode[2])}')
+    print(f'avg_iters: {avg_iters_per_episode}')
+    print(f'avg_rewards: {avg_avg_reward_per_episode}')
+    print(f'avg_leaves: {avg_leaf_count}')
+    print(f'avg_nodes: {avg_node_count}')
+    print(f'not converged: {not_converged}')
+
+    f = open(filename, "w")
+    for i in range(min_size):
+        f.write(str(i+1)+" "+str(avg_iters_per_episode[i])+" "+str(avg_avg_reward_per_episode[i])+" "+str(avg_leaf_count[i])+" "+str(avg_node_count[i])+"\n")
+
+def alg_converged(iters_per_episode):
+    return sum(iters_per_episode[:20]) > sum(iters_per_episode[-20:]) * 3
+
+# def Old_Alg(model_path,
+#         epsilon=0.5,  # determines amount of randomness in Algorithm 2
+#         H_s=1,  # starting threshold for what potential delta_Q is required to trigger a split
+#         D=0.999,  # decay for H_s
+#         gamma=0.8,  # const for the Bellman equation
+#         alpha=0.3,  # const for the Bellman equation 0.01
+#         d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
+#         hist_min_size = 1500,
+#         num_of_episodes=3000,
+#         num_of_steps = 500000):
 def Old_Alg(model_path,
         epsilon=0.5,  # determines amount of randomness in Algorithm 2
         H_s=1,  # starting threshold for what potential delta_Q is required to trigger a split
-        D=0.999,  # decay for H_s
-        gamma=0.99,  # const for the Bellman equation
-        alpha=0.1,  # const for the Bellman equation 0.01
+        D=0.9999,  # decay for H_s
+        gamma=0.8,  # const for the Bellman equation
+        alpha=0.3,  # const for the Bellman equation 0.01
         d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
-        hist_min_size = 200,
-        num_of_episodes=300,
-        num_of_steps = 10000):
+        hist_min_size = 3000,
+        num_of_episodes=10000,
+        num_of_steps = 1000000):
     initial_state = get_initial_state(model_path)
 
     lows = [1, 1, 0, 0, 0, 0, 0]  # array of the lowest values of model variables
-    highs = [5, 5, 1, 1, 1, 1, 1]  # array of the highest values of model variables
+    highs = [5, 5, 5, 3, 1, 1, 1]  # array of the highest values of model variables
 
     action_names = ["left", "right", "top", "down"]  # all actions
     tree = decision_tree_old.DecisionTreeOld(initial_state, lows, highs, action_names)
     new_state = initial_state
 
     iters_per_episode = []
+    avg_reward_per_episode = []
+    leaf_count = []
+    node_count = []
     h_s = H_s
     step = 0
     split_count = 0
     for i in range(num_of_episodes):
         new_state = initial_state
-        print("****************")
+        # print("****************")
         print("Episode "+str(i+1))
-        print("****************")
-        print("state: " + str(new_state.global_env))
+        # print("****************")
+        # print("state: " + str(new_state.global_env))
         episode_done = False
         j = 0
         #h_s=H_s
+        total_episode_reward = 0
         while not episode_done:
             step += 1
-            print("Ep. "+str(i+1)+", Iter. "+str(j+1))
+            # print("Ep. "+str(i+1)+", Iter. "+str(j+1))
             j += 1
-            print("Struct"+tree.structure())
+            # print("Struct"+tree.structure())
             # st ← current state at timestep t;
             current_state = new_state
 
@@ -272,69 +437,87 @@ def Old_Alg(model_path,
             L = tree.root.get_leaf(current_state)
             # at,rt,st+1 ←TakeAction(L);
             action, reward, new_state, random_action = take_action_old(current_state, epsilon, tree, step, num_of_steps)
-
+            total_episode_reward += reward
             # split = True if a split needs to be performed
             split = tree.update(action, reward, current_state, new_state, episode_done, alpha, gamma, d, random_action, hist_min_size)
-            print(f'split: {split}')
+            # print(f'split: {split}')
 
             if split:
 
                 tree.split_node(current_state, L)
                 split_count += 1
-                if split_count == 2:
-                    print("SECOND SPILT")
-                    break
+                # if split_count == 2:
+                #     print("SECOND SPILT")
+                #     break
 
             episode_done = episode_finished(new_state)
+
             if episode_done:
                 iters_per_episode.append(j)
-
+                avg_reward_per_episode.append(total_episode_reward / j)
+                leaf_count.append(tree.get_total_leaves())
+                node_count.append(tree.get_total_nodes())
             if step == num_of_steps:#TODO: experiment
                 break
         if step == num_of_steps:#TODO: experiment
             break
-        if split_count == 2:
-            break
+        # if split_count == 2:
+        #     break
     g = Digraph('G', filename='graph.gv')
     tree.plot(g)
     print(g.source)
     print(f'iters per episode: {str(iters_per_episode)}')
+    print(f'avg reward per episode: {avg_reward_per_episode}')
+    print(f'total leaves per episode: {leaf_count}')
+    print(f'total nodes per episode: {node_count}')
+    print(f'tot. leaves/pos. leaves: {tree.get_total_leaves()}/{total_possible_leaves(lows, highs)}')
+    print(f'tot. nodes: {tree.get_total_nodes()}')
 
-    a = [10, 11, 12, 13, 14, 15]
-    b = [5, 5]
+    # TODO: replace with parameters
+    tree.reinit_nodes()
+    tree.reinit_leaves()
+    tree.reinit_ids()
+
+    # a = [10, 11, 12, 13, 14, 15]
+    # b = [5, 5]
     # a1 = [10, 11, 12, 13, 14, 15]
     # b1 = [-10, -11, -14]
     # print("T-test: "+str(stats.ttest_ind(a, b)))
     # print("T-test: " + str(stats.ttest_ind(a1, b1)))
 
+    return iters_per_episode, avg_reward_per_episode, leaf_count, node_count
+
 def take_action_old(current_state, epsilon, tree, step, num_of_steps):
 
-    # eps_func = (lambda step: max(0.05, 1 - step / (num_of_steps)))
+    eps_func = (lambda step: max(0.05, 1 - step / (num_of_steps)))
+    # eps_func = (lambda step: max(0, 1 - step / (num_of_steps)))
     # print(f'prob_random {step} = {eps_func(step)}')
-    if np.random.random() < epsilon:
-    # if np.random.random() < eps_func(step):
-        print("selected action randomly")
+    # if np.random.random() < epsilon:
+    if np.random.random() < eps_func(step):
+    #     print("selected action randomly")
         random_action = True # True if action was chosen randomly
         action = random.choice(current_state.transitions)
         action_label = action.action.action_type.label
     else:
-        print("selected action with biggest q value")
+        # print("selected action with biggest q value")
         random_action = False
         # select based on largest Q-Value
         action_label = tree.select_action(current_state)
         action = find_action_by_label(current_state, action_label)
     # print(current_state.global_env)
-    print("selected action: " + action.action.action_type.label)
+    # print("selected action: " + action.action.action_type.label)
 
     new_state = action.destinations.pick().state
     reward = get_immediate_reward(current_state, new_state)
-    print(f"reward {reward}")
-    print("new_state: " + str(new_state.global_env))
-    print(f"value of gold: {get_value(new_state, 'gold')}")
+    # print(f"reward {reward}")
+    # print("new_state: " + str(new_state.global_env))
+    # print(f"value of gold: {get_value(new_state, 'gold')}")
     # return action, reward, new_state, random_action
     return action_label, reward, new_state, random_action
 
-CQI("../Testing/models/resource-working-model.jani")
+# CQI("../Testing/models/resource-working-model.jani")
 # Old_Alg("../Testing/models/resource-working-model.jani")
 # CQI("../testing/models/resource-gathering_parsed.jani")
 
+# save_full_stats_res_gath("../testing/Simulations/full_stats_res_gath.txt", 10, CQI)
+save_full_stats_res_gath("../testing/Simulations/full_stats_res_gath_old_alg.txt", 10, Old_Alg)
