@@ -12,6 +12,8 @@ from resources_rewards import get_immediate_reward
 """
 This is the main file in which the high-level structure of the both algorithms is defined
 and all the simulations are performed.
+This file performs all tests on the resources_parsed_fully.jani file
+To change the amount of gold and gems to collect change the model variables and their bounds within the JANI file
 """
 
 def get_actions(file_path):

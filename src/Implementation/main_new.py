@@ -163,23 +163,6 @@ def CQI(model_path,
     save_stat_avg_reward("../Testing/Simulations/avg_rewards.txt", avg_reward_per_episode)
 
 
-
-
-    # eps_func = (lambda step: max(0.1, 1 - step / 2 * 1e2))
-    # print(f'eps_func(1) = {eps_func(1)}')
-    # print(f'eps_func(2) = {eps_func(2)}')
-    # print(f'eps_func(3) = {eps_func(3)}')
-    # print(f'eps_func(4) = {eps_func(4)}')
-    # print(f'eps_func(5) = {eps_func(5)}')
-    # print(f'eps_func(6) = {eps_func(6)}')
-    # print(f'eps_func(7) = {eps_func(7)}')
-    # print(f'eps_func(8) = {eps_func(8)}')
-    # print(f'eps_func(10) = {eps_func(10)}')
-    # print(f'eps_func(100) = {eps_func(100)}')
-    # print(f'eps_func(1000) = {eps_func(1000)}')
-    # print(f'eps_func(10000) = {eps_func(10000)}')
-    # print(f'eps_func(50000) = {eps_func(50000)}')
-
 def take_action(current_state, epsilon, tree, step, num_of_steps):
     action = None
 
@@ -362,7 +345,6 @@ def take_action_old(current_state, epsilon, tree, step, num_of_steps):
     # return action, reward, new_state, random_action
     return action_label, reward, new_state, random_action
 
-# model_path = "/Users/elisabeth/Desktop/model checking/modelChecking/src/Testing/models/resources_parsed_fully.jani"
 # CQI(model_path)
 # Old_Alg("../Testing/models/resource-working-model.jani")
 CQI("../Testing/models/resources_parsed_fully.jani")

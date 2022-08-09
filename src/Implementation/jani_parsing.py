@@ -1,5 +1,9 @@
 import json
 
+# replaces all references to globally defined functions with the bodey of those functions within JANI models
+# momba unfortunately requires this to be able to parse the model
+# was only used on resource gathering - frozen lake did not require this type of adaption
+
 filepath = "../Testing/models/resource-gathering.v2.jani"
 functions = {}
 
