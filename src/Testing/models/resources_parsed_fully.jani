@@ -2434,17 +2434,17 @@
                 "base": "int",
                 "kind": "bounded",
                 "lower-bound": 0,
-                "upper-bound": 5
+                "upper-bound": 0
             }
         },
         {
-            "initial-value": 3,
+            "initial-value": 0,
             "name": "required_gem",
             "type": {
                 "base": "int",
                 "kind": "bounded",
                 "lower-bound": 0,
-                "upper-bound": 3
+                "upper-bound": 0
             }
         }
     ]

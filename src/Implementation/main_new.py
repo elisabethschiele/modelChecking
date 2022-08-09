@@ -18,9 +18,9 @@ TODO:
 - change model_path to string of path to desired model
 - check model for variable types (only boolean, real (will be ignored) and bounded integers allowed)
 - remove variables you do not want the model to consider for training (marked TODO in code)
-- change get_value to work for your variables - check for correct commenting out for lakje and resources (marked TODO)
+- change get_value to work for your variables - check for correct commenting out for lake and resources (marked TODO)
 """
-model_path = "/Users/elisabeth/Desktop/model checking/modelChecking/src/Testing/models/resources_parsed_fully.jani"
+
 
 def get_actions(file_path):
     labels = []
@@ -362,7 +362,8 @@ def take_action_old(current_state, epsilon, tree, step, num_of_steps):
     # return action, reward, new_state, random_action
     return action_label, reward, new_state, random_action
 
-CQI(model_path)
+# model_path = "/Users/elisabeth/Desktop/model checking/modelChecking/src/Testing/models/resources_parsed_fully.jani"
+# CQI(model_path)
 # Old_Alg("../Testing/models/resource-working-model.jani")
-# CQI("../testing/models/resource-gathering_parsed.jani")
+CQI("../Testing/models/resources_parsed_fully.jani")
 

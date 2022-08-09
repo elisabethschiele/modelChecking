@@ -1,13 +1,15 @@
-from asyncore import file_dispatcher
+
 import random
 
 import numpy as np
 from graphviz import Digraph
 from momba import engine, jani
 import pathlib
-import lake_decision_tree
 from lake_rewards import get_immediate_reward #, episode_finished
 import json
+
+from src.Implementation import decision_tree
+
 
 def get_actions(file_path):
     labels = []
@@ -80,7 +82,7 @@ def CQI(model_path,
 
     action_names = get_actions(model_path)  # all actions
    
-    tree = lake_decision_tree.DecisionTree(initial_state, lows, highs, action_names, var_labels)
+    tree = decision_tree.DecisionTree(initial_state, lows, highs, action_names, var_labels)
     new_state = initial_state
 
     iters_per_episode = []
