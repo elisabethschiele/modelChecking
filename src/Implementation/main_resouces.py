@@ -72,7 +72,7 @@ def CQI(model_path,
         alpha=0.1,             # const for the Bellman equation 0.01
         d=0.999,               # visit decay for Algorithm 4 and Algorithm 5
         num_of_episodes=10000,
-        num_of_steps=1000000):
+        num_of_steps=50000):
     """
     CQI Algorithm from the new paper.
     """
@@ -536,10 +536,10 @@ part of code at the end of both algorithms' definitions if evaluation is desired
 """
 
 
-CQI("../Testing/models/resources_parsed_fully.jani")
+# CQI("../Testing/models/resources_parsed_fully.jani")
 # Old_Alg("../Testing/models/resources_parsed_fully.jani")
 
 # save_full_stats_res_gath("../testing/Simulations/Sim_new_1000000steps.txt", 10, CQI, "../Testing/models/resources_parsed_fully.jani")
 # save_full_stats_res_gath("../testing/Simulations/Sim_old_1000000steps.txt", 10, Old_Alg, "../Testing/models/resources_parsed_fully.jani")
 
-#hs_sim_res_gath("../testing/Simulations/hs_stats.txt", CQI, "../Testing/models/resources_parsed_fully.jani")
+hs_sim_res_gath("../testing/Simulations/hs_stats.txt", CQI, "../Testing/models/resources_parsed_fully.jani")
