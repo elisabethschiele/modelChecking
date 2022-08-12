@@ -537,9 +537,10 @@ part of code at the end of both algorithms' definitions if evaluation is desired
 
 
 # CQI("../Testing/models/resources_parsed_fully.jani")
-# Old_Alg("../Testing/models/resources_parsed_fully.jani")
+Old_Alg("../Testing/models/resources_parsed_fully.jani")
 
-# save_full_stats_res_gath("../testing/Simulations/Sim_new_1000000steps.txt", 10, CQI, "../Testing/models/resources_parsed_fully.jani")
-# save_full_stats_res_gath("../testing/Simulations/Sim_old_1000000steps.txt", 10, Old_Alg, "../Testing/models/resources_parsed_fully.jani")
+# save_full_stats_res_gath("../testing/Simulations/Sim_new_1000000steps.txt", 10, CQI,
+# "../Testing/models/resources_parsed_fully.jani") save_full_stats_res_gath(
+# "../testing/Simulations/Sim_old_1000000steps.txt", 10, Old_Alg, "../Testing/models/resources_parsed_fully.jani")
 
 # hs_sim_res_gath("../testing/Simulations/hs_stats.txt", CQI, "../Testing/models/resources_parsed_fully.jani")
