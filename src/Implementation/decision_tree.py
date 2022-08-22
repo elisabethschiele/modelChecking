@@ -1,13 +1,12 @@
-import operator
 from abc import abstractmethod
-import numpy as np
-
-id_counter = 0
-leaf_counter = 0
-node_counter = 0
 
 
 class DecisionTree:
+    """
+    This is the generic tree class that includes functionality common for
+    the decision trees for each of two algorithms (see decision_tree_new.py
+    and decision_tree_old.py)
+    """
     def __init__(self, initial_state, lows, highs, action_names, var_labels):
 
         self.initial_state = initial_state
@@ -15,13 +14,11 @@ class DecisionTree:
         self.highs = highs
         self.action_names = action_names
         self.var_labels = var_labels
+        self.splits = self.generate_splits(lows, highs, action_names)
 
-        splits = self.generate_splits(lows, highs, action_names)
-
-        actions_qs = {}  # mapping of actions to Q-values
+        self.actions_qs = {}  # mapping of actions to Q-values
         for action in action_names:
-            actions_qs[action] = 0
-        self.root = LeafNode(actions_qs, 1, splits, self.var_labels)
+            self.actions_qs[action] = 0
 
     def select_action(self, state):
         # select action with highest q value among those that are allowed
@@ -43,7 +40,7 @@ class DecisionTree:
             default_qs[action] = 0
 
         splits = []
-        for f in range(len(highs)):  # iterate for all features
+        for f in range(len(highs)):  # iterate over all features
             for i in range(highs[f] - lows[f]):  # we want splits at 0.5, 1.5, 2.5, 3.5, ... -> i+0.5+lows[f]
                 right_qs = {}  # mapping of actions to Q-values
                 for action in action_names:
@@ -53,55 +50,17 @@ class DecisionTree:
                     left_qs[action] = 0
                 splits.append(Split(f,
                                     lows[f] + 0.5 + i,
-                                    # np.zeros(total_actions),
-                                    # np.zeros(total_actions),
                                     right_qs,
                                     left_qs,
                                     0.5,
                                     0.5, self.var_labels))
         return splits
 
-    def update(self, action, reward, old_state, new_state, episode_done, alpha, gamma, d):
-        # TODO: reduce params to necessary
-        # target = r + gamma * max(Q(new_state, best_next_action))
-        target = reward + (gamma * max(self.root.get_qs(new_state).items(), key=operator.itemgetter(1))[1])
-        self.root.update(action, old_state, target, alpha, gamma, d)
-
-    def split_node(self, old_state, L, best_split):
-        left_splits = self.generate_splits(self.lows, self.highs, self.action_names)
-        right_splits = self.generate_splits(self.lows, self.highs, self.action_names)
-        self.root = self.root.split_node(old_state, L, best_split, left_splits, right_splits)
-
-    def best_split(self, state, action):
-        # calls best_split on leaf corresponding to state
-        L = self.root.get_leaf(state)
-        return L.best_split(self, state, action)
-
     def structure(self):
         return self.root.structure()
 
     def plot(self, g):
         self.root.plot(g)
-
-    def get_total_leaves(self):
-        global leaf_counter
-        return leaf_counter
-
-    def get_total_nodes(self):
-        global node_counter
-        return node_counter
-
-    def reinit_leaves(self):
-        global leaf_counter
-        leaf_counter = 0
-
-    def reinit_nodes(self):
-        global node_counter
-        node_counter = 0
-
-    def reinit_ids(self):
-        global id_counter
-        id_counter = 0
 
 
 class Split():
@@ -153,32 +112,17 @@ class TreeNode:
     def get_vs(self, state):
         pass
 
-    def update(self, action, old_state, target, alpha, gamma, d):
-        # update visit frequency on the path
-        self.visits = self.visits * d + (1 - d)
-
     def update_sibling(self, action, old_state, target, alpha, gamma, d):
         # update visit frequency of siblings on the path
         self.visits = self.visits * d
 
-    @abstractmethod
-    def split_node(self, old_state, L, best_split, left_splits, right_splits):
-        pass
-
 
 class LeafNode(TreeNode):
-
+    # generic leaf node
     def __init__(self, actions_qs, visits, splits, var_labels):
         self.actions_qs = actions_qs
         self.visits = visits
         self.splits = splits
-        global id_counter
-        self.id = id_counter
-        id_counter += 1
-        global leaf_counter
-        leaf_counter += 1
-        global node_counter
-        node_counter += 1
         self.var_labels = var_labels
 
     def __str__(self):
@@ -200,63 +144,17 @@ class LeafNode(TreeNode):
     def get_qs(self, state):
         return self.actions_qs
 
-    def update(self, action, old_state, target, alpha, gamma, d):
-        # update visit frequency
-        super().update(action, old_state, target, alpha, gamma, d)
-
-        # update leaf Q values
-        self.actions_qs[action] = (1 - alpha) * self.actions_qs[action] + alpha * target
-
-        # update possible splits
-        for split in self.splits:
-            split.update(action, old_state, target, alpha, gamma, d)
-
     def get_leaf(self, state):
         return self
-
-    def split_node(self, old_state, L, best_split, left_splits, right_splits):
-        # Algorithm 7
-        Bv = self.visits
-        Bu = best_split.feature
-        Bm = best_split.value
-
-        Lv = best_split.left_visits
-        Lq = best_split.left_qs
-        Rv = best_split.right_visits
-        Rq = best_split.right_qs
-
-        Left_Child = LeafNode(Lq, Lv, left_splits, self.var_labels)
-        Right_Child = LeafNode(Rq, Rv, right_splits, self.var_labels)
-        B = Inner_Node(Bu, Bm, Left_Child, Right_Child, Bv, self.var_labels)
-        global leaf_counter
-        leaf_counter -= 1
-        return B
-
-    def best_split(self, Tree, state, action):
-        Vp = Tree.root.get_vs(state)
-        SQ = []
-        for i in range(len(self.splits)):
-            split = self.splits[i]
-            cl_array = []
-            for key in split.left_qs:
-                cl_array.append(split.left_qs[key] - self.actions_qs[action])
-            cl = max(cl_array)
-            cr_array = []
-            for key in split.right_qs:
-                cr_array.append(split.right_qs[key] - self.actions_qs[action])
-            cr = max(cr_array)
-            SQ.append(Vp * (cl * split.left_visits + cr * split.right_visits))
-        bestSplit = self.splits[np.argmax(SQ)]
-        bestValue = max(SQ)
-        return bestSplit, bestValue
 
     def get_vs(self, state):
         # returns values of all visits from root to leaf corresponding to state
         return self.visits
 
 
-class Inner_Node(TreeNode):
-    # "branching node" in the paper
+class InnerNode(TreeNode):
+    # "branching node" in the paper, once again, generic: each of the algorthims
+    # uses an extension of this class
 
     def __init__(self, feature, value, left_child, right_child, visits, var_labels):
         self.feature = feature
@@ -264,9 +162,9 @@ class Inner_Node(TreeNode):
         self.left_child = left_child
         self.right_child = right_child
         self.visits = visits
-        global id_counter
-        self.id = id_counter
-        id_counter += 1
+        # global id_counter
+        # self.id = id_counter
+        # id_counter += 1
         self.var_labels = var_labels
 
     def __str__(self):
@@ -290,38 +188,9 @@ class Inner_Node(TreeNode):
         # returns Q values of the corresponding child
         return self.select_child(s)[0].get_qs(s)
 
-    def select_child(self, state):
-        # selects the child that corresponds to the state
-        # TODO: generalize - Done
-        feature_label = self.var_labels[self.feature]
-
-        if state.global_env[feature_label].as_int < self.value:
-            return self.left_child, self.right_child
-        else:
-            return self.right_child, self.left_child
-
     def get_leaf(self, state):
         return self.select_child(state)[0].get_leaf(state)
 
-    def update(self, action, old_state, target, alpha, gamma, d):
-        # update visit frequency
-        super().update(action, old_state, target, alpha, gamma, d)
-
-        # continue updating in the direction of respective leaf
-        next_node, sibling = self.select_child(old_state)
-        next_node.update(action, old_state, target, alpha, gamma, d)
-        sibling.update_sibling(action, old_state, target, alpha, gamma, d)
-
-    def split_node(self, old_state, L, best_split, left_splits, right_splits):
-        # TODO: generalize - Done
-        feature_label = self.var_labels[self.feature]
-
-        if old_state.global_env[feature_label].as_int < self.value:
-            self.left_child = self.left_child.split_node(old_state, L, best_split, left_splits, right_splits)
-        else:
-            self.right_child = self.right_child.split_node(old_state, L, best_split, left_splits, right_splits)
-        return self
-
     def get_vs(self, state):
-        # returns values of all visits from root to leaf corresponding to state
+        # return values of all visits from root to leaf corresponding to state
         return self.visits * self.select_child(state)[0].get_vs(state)

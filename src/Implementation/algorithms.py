@@ -5,9 +5,12 @@ from graphviz import Digraph
 from momba import engine, jani
 import pathlib
 
-import decision_tree
+import decision_tree_new
 import decision_tree_old
-from resources_rewards import get_immediate_reward
+
+# change import depending on your model
+from resources_rewards import get_immediate_reward, episode_finished
+# from lake_rewards import get_immediate_reward, episode_finished
 
 """
 This is the main file in which the high-level structure of the both algorithms is defined
@@ -15,6 +18,7 @@ and all the simulations are performed.
 This file performs all tests on the resources_parsed_fully.jani file
 To change the amount of gold and gems to collect change the model variables and their bounds within the JANI file
 """
+
 
 def get_actions(file_path):
     labels = []
@@ -59,7 +63,6 @@ def get_initial_state(model_path):
             "deadline": 200,
         }
     )
-    # print(network.ctx.global_scope.variable_declarations) TODO? automatic variable extraction inc. bounds
 
     initial_states = explorer.initial_states
     (initial_state,) = initial_states
@@ -67,14 +70,14 @@ def get_initial_state(model_path):
 
 
 def CQI(model_path,
-        epsilon=0.5,           # determines amount of randomness in Algorithm 2
-        H_s=8,                 # starting threshold for what potential delta_Q is required to trigger a split
-        D=0.9999,              # decay for H_s
-        gamma=0.8,             # const for the Bellman equation 0.99
-        alpha=0.1,             # const for the Bellman equation 0.01
-        d=0.999,               # visit decay for Algorithm 4 and Algorithm 5
+        epsilon=0.5,  # determines amount of randomness in Algorithm 2
+        H_s=8,  # starting threshold for what potential delta_Q is required to trigger a split
+        D=0.9999,  # decay for H_s
+        gamma=0.8,  # const for the Bellman equation 0.99
+        alpha=0.1,  # const for the Bellman equation 0.01
+        d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
         num_of_episodes=10000,
-        num_of_steps=50000):
+        num_of_steps=1000000):
     """
     CQI Algorithm from the new paper.
     """
@@ -82,16 +85,13 @@ def CQI(model_path,
     initial_state = get_initial_state(model_path)
     lows, highs, var_labels = get_lows_highs(model_path)
 
-    # for this specific model we do not want the variable "success" o have an impact on our training
+    # for this specific model we do not want the variable "success" have an impact on our training
     lows.pop(0)
     highs.pop(0)
     var_labels.pop(0)
 
     action_names = get_actions(model_path)  # all actions
-    tree = decision_tree.DecisionTree(initial_state, lows, highs, action_names, var_labels)
-    new_state = initial_state
-
-    # TODO: switch to episode_done = episode_done(new_state)
+    tree = decision_tree_new.DecisionTreeNew(initial_state, lows, highs, action_names, var_labels)
 
     iters_per_episode = []
     avg_reward_per_episode = []
@@ -153,7 +153,7 @@ def CQI(model_path,
         if tree.get_total_leaves() == 1000:
             break
 
-    g = Digraph('G', filename='graph.gv') # generate graph in graphviz format
+    g = Digraph('G', filename='graph.gv')  # generate graph in graphviz format
     tree.plot(g)
     print(g.source)
     print(f'iters per episode: {str(iters_per_episode)}')
@@ -171,7 +171,7 @@ def CQI(model_path,
     # uncomment for testing - evaluation on additional k steps without changing the learned tree further
     # it, rew, lc, nc = evaluate(model_path, tree, initial_state, D, gamma, alpha, d, num_of_episodes, num_of_steps)
 
-    # TODO: replace with parameters
+    # reinitialize global variables
     tree.reinit_nodes()
     tree.reinit_leaves()
     tree.reinit_ids()
@@ -183,11 +183,7 @@ def CQI(model_path,
 def evaluate(model_path,
              tree,
              initial_state,
-             H_s=8,                      # starting threshold for what potential delta_Q is required to trigger a split
-             D=0.9999,                   # decay for H_s
-             gamma=0.8,                  # const for the Bellman equation 0.99
-             alpha=0.1,                  # const for the Bellman equation 0.01
-             d=0.999,                    # visit decay for Algorithm 4 and Algorithm 5
+             H_s=8,  # starting threshold for what potential delta_Q is required to trigger a split
              num_of_episodes=10000,
              num_of_steps=50000,
              ):
@@ -199,14 +195,11 @@ def evaluate(model_path,
     epsilon = 0.05
     lows = [1, 1, 0, 0, 0, 0, 0]  # array of the lowest values of model variables
     highs = [5, 5, 5, 3, 1, 1, 1]  # array of the highest values of model variables
-    action_names = ["left", "right", "top", "down"]  # all actions
-    new_state = initial_state
 
     iters_per_episode = []
     avg_reward_per_episode = []
     leaf_count = []
     node_count = []
-    h_s = H_s
     step = 0
     for i in range(num_of_episodes):
         new_state = initial_state
@@ -220,7 +213,6 @@ def evaluate(model_path,
         while not episode_done:
             step += 1
             current_state = new_state
-            L = tree.root.get_leaf(current_state)
             action, reward, new_state = take_action(current_state, epsilon, tree, step, num_of_steps, False)
             total_episode_reward += reward
             j = j + 1
@@ -265,7 +257,6 @@ def take_action(current_state, epsilon, tree, step, num_of_steps, epsilon_decayi
         prob_random = eps_func(step)
     else:
         prob_random = epsilon
-    eps_func = (lambda step: max(0, 1 - step / (num_of_steps)))
     if np.random.random() < prob_random:
         action = random.choice(current_state.transitions)
         action_label = action.action.action_type.label
@@ -276,28 +267,6 @@ def take_action(current_state, epsilon, tree, step, num_of_steps, epsilon_decayi
     new_state = action.destinations.pick().state
     reward = get_immediate_reward(current_state, new_state)
     return action_label, reward, new_state
-
-
-def get_value(state, variable_name):
-    """
-    Returns integer value of :param variable_name of state :param state.
-    """
-
-    switch = {
-        "x": int(str(state.global_env['x'])[6:len(str(state.global_env['x'])) - 1]),
-        "y": int(str(state.global_env['y'])[6:len(str(state.global_env['y'])) - 1]),
-        "required_gold": int(str(state.global_env['required_gold'])[6:len(str(state.global_env['required_gold'])) - 1]),
-        "required_gem": int(str(state.global_env['required_gem'])[6:len(str(state.global_env['required_gem'])) - 1]),
-        "gold": int(str(state.global_env['gold'])[6:len(str(state.global_env['gold'])) - 1] == "True"),
-        "gem": int(str(state.global_env['gem'])[6:len(str(state.global_env['gem'])) - 1] == "True"),
-        "attacked": int(str(state.global_env['attacked'])[6:len(str(state.global_env['attacked'])) - 1] == "True")
-    }
-    return switch.get(variable_name, None)
-
-
-def episode_finished(state):
-    # episode is done as soon as no more gold or gems are required
-    return get_value(state, "required_gold") == 0 and get_value(state, "required_gem") == 0
 
 
 def find_action_by_label(state, label):
@@ -424,8 +393,6 @@ def alg_converged(iters_per_episode):
 
 def Old_Alg(model_path,
             epsilon=0.5,  # determines amount of randomness in Algorithm 2
-            H_s=1,  # starting threshold for what potential delta_Q is required to trigger a split
-            D=0.9999,  # decay for H_s
             gamma=0.8,  # const for the Bellman equation
             alpha=0.3,  # const for the Bellman equation 0.01
             d=0.999,  # visit decay for Algorithm 4 and Algorithm 5
@@ -433,14 +400,19 @@ def Old_Alg(model_path,
             num_of_episodes=10000,
             num_of_steps=1000000):
     """
-    Pyeatt Algorithm from the old paper. TODO: remove unused parameters
+    Pyeatt Algorithm from the old paper.
     """
+
     initial_state = get_initial_state(model_path)
-    lows = [1, 1, 0, 0, 0, 0, 0]  # array of the lowest values of model variables
-    highs = [5, 5, 5, 3, 1, 1, 1]  # array of the highest values of model variables
+    lows, highs, var_labels = get_lows_highs(model_path)
+
+    # for this specific model we do not want the variable "success" o have an impact on our training
+    lows.pop(0)
+    highs.pop(0)
+    var_labels.pop(0)
+
     action_names = ["left", "right", "top", "down"]  # all actions
-    tree = decision_tree_old.DecisionTreeOld(initial_state, lows, highs, action_names)
-    new_state = initial_state
+    tree = decision_tree_old.DecisionTreeOld(initial_state, lows, highs, action_names, var_labels)
 
     iters_per_episode = []
     avg_reward_per_episode = []
@@ -481,12 +453,12 @@ def Old_Alg(model_path,
                 avg_reward_per_episode.append(total_episode_reward / j)
                 leaf_count.append(tree.get_total_leaves())
                 node_count.append(tree.get_total_nodes())
-            if step == num_of_steps:  # TODO: experiment
+            if step == num_of_steps:
                 break
-        if step == num_of_steps:  # TODO: experiment
+        if step == num_of_steps:
             break
 
-    g = Digraph('G', filename='graph.gv') # plot the learned tree in graphviz format
+    g = Digraph('G', filename='graph.gv')  # plot the learned tree in graphviz format
     tree.plot(g)
     print(g.source)
     print(f'iters per episode: {str(iters_per_episode)}')
@@ -504,12 +476,13 @@ def Old_Alg(model_path,
     # uncomment for testing
     # it, rew, lc, nc = evaluate(model_path, tree, initial_state, D, gamma, alpha, d, num_of_episodes, num_of_steps)
 
+    # reinitialize global variables
     tree.reinit_nodes()
     tree.reinit_leaves()
     tree.reinit_ids()
 
     # uncomment for testing
-    return it_main, rew_main, lc_main, nc_main #, it, rew, lc, nc
+    return it_main, rew_main, lc_main, nc_main  # , it, rew, lc, nc
 
 
 def take_action_old(current_state, epsilon, tree, step, num_of_steps):
@@ -532,17 +505,39 @@ def take_action_old(current_state, epsilon, tree, step, num_of_steps):
     reward = get_immediate_reward(current_state, new_state)
     return action_label, reward, new_state, random_action
 
+
 """
 Some of the useful runs, inc. the ones we used for our simulations. Don't forget to uncomment the evaluation
 part of code at the end of both algorithms' definitions if evaluation is desired.
 """
 
-
 # CQI("../Testing/models/resources_parsed_fully.jani")
-Old_Alg("../Testing/models/resources_parsed_fully.jani")
+# Old_Alg("../Testing/models/resources_parsed_fully.jani")
 
 # save_full_stats_res_gath("../testing/Simulations/Sim_new_1000000steps.txt", 10, CQI,
 # "../Testing/models/resources_parsed_fully.jani") save_full_stats_res_gath(
 # "../testing/Simulations/Sim_old_1000000steps.txt", 10, Old_Alg, "../Testing/models/resources_parsed_fully.jani")
 
 # hs_sim_res_gath("../testing/Simulations/hs_stats.txt", CQI, "../Testing/models/resources_parsed_fully.jani")
+
+# CQI("../Testing/models/resources_parsed_fully.jani",
+#     epsilon=0.5,
+#     H_s=1,
+#     D=0.999,
+#     gamma=0.99,
+#     alpha=0.1,
+#     d=0.999,
+#     num_of_episodes=5000,
+#     num_of_steps=50000)
+
+# Old_Alg("../Testing/models/resources_parsed_fully.jani",
+#     epsilon=0.5,
+#     gamma=0.99,
+#     alpha=0.1,
+#     d=0.999,
+#     hist_min_size=200,
+#     num_of_episodes=300,
+#     num_of_steps = 50000)
+
+# CQI("../Testing/models/lake.jani")
+# Old_Alg("../Testing/models/lake.jani")
