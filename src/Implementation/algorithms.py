@@ -9,8 +9,8 @@ import decision_tree_new
 import decision_tree_old
 
 # Important! Change the following import depending on your model
-# from resources_rewards import get_immediate_reward, episode_finished
-from lake_rewards import get_immediate_reward, episode_finished
+from resources_rewards import get_immediate_reward, episode_finished
+# from lake_rewards import get_immediate_reward, episode_finished
 
 """
 This is the main file in which the high-level structure of the both algorithms is defined
@@ -93,9 +93,10 @@ def CQI(model_path,
     Important! Comment/adjust them for model used as needed.
     """
 
-    # lows.pop(0)
-    # highs.pop(0)
-    # var_labels.pop(0)
+    lows.pop(0)
+    highs.pop(0)
+    var_labels.pop(0)
+
     action_names = get_actions(model_path)  # all actions
     tree = decision_tree_new.DecisionTreeNew(initial_state, lows, highs, action_names, var_labels)
 
@@ -418,9 +419,9 @@ def Old_Alg(model_path,
     Important! Comment/adjust them for model used as needed.
     """
 
-    # lows.pop(0)
-    # highs.pop(0)
-    # var_labels.pop(0)
+    lows.pop(0)
+    highs.pop(0)
+    var_labels.pop(0)
 
     # action_names = ["left", "right", "top", "down"]  # all actions
     action_names = get_actions(model_path)
@@ -567,6 +568,6 @@ When running the Frozen lake model don't forget to:
 #     num_of_episodes=1000,
 #     num_of_steps=100000)
 
-Old_Alg("../Testing/models/lake.jani",
-    num_of_episodes=1000,
-    num_of_steps=100000)
+# Old_Alg("../Testing/models/lake.jani",
+#     num_of_episodes=1000,
+#     num_of_steps=100000)
