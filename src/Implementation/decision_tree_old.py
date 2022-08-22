@@ -104,12 +104,14 @@ class LeafNodeOld(LeafNode):
         max_t = 0
         best_split = None
         for split in self.splits:
-            feat = get_feature_name(split.feature)
+            # feat = get_feature_name(split.feature)
+            feat = self.var_labels[split.feature]
             val = split.value
             delta_q_left = []
             delta_q_right = []
             for i in range(len(self.visited_states)):
-                if get_value(self.visited_states[i], feat) < val:
+                # if get_value(self.visited_states[i], feat) < val:
+                if self.visited_states[i].global_env[feat].as_int < val:
                     delta_q_left.append(self.delta_q_hist[i])
                 else:
                     delta_q_right.append(self.delta_q_hist[i])
@@ -148,57 +150,16 @@ class InnerNodeOld(InnerNode):
         self.id = id_counter
         id_counter += 1
 
-    def select_child(self, state):
-        # selects the child that corresponds to the state
-        feature_label = get_feature_name(self.feature)
-        if state.global_env[feature_label].as_int < self.value:
-            return self.left_child, self.right_child
-        else:
-            return self.right_child, self.left_child
-
     def update(self, action, old_state, new_state, target, alpha, gamma, d, random_action, hist_min_size):
         # continue updating in the direction of respective leaf
         next_node, sibling = self.select_child(old_state)
         return next_node.update(action, old_state, new_state, target, alpha, gamma, d, random_action, hist_min_size)
 
     def split_node(self, old_state, L, left_splits, right_splits):
-        feature_label = get_feature_name(self.feature)
-        # feature_label = self.var_labels[self.feature]
+        # feature_label = get_feature_name(self.feature)
+        feature_label = self.var_labels[self.feature]
         if old_state.global_env[feature_label].as_int < self.value:
             self.left_child = self.left_child.split_node(old_state, L, left_splits, right_splits)
         else:
             self.right_child = self.right_child.split_node(old_state, L, left_splits, right_splits)
         return self
-
-
-def get_feature_name(index):
-    if index == 0:
-        return "x"
-    if index == 1:
-        return "y"
-    if index == 2:
-        return "required_gold"
-    if index == 3:
-        return "required_gem"
-    if index == 4:
-        return "gold"
-    if index == 5:
-        return "gem"
-    if index == 6:
-        return "attacked"
-    return "none"
-
-
-def get_value(state, variable_name):
-    # returns integer value of variable_name
-
-    switch = {
-        "x": int(str(state.global_env['x'])[6:len(str(state.global_env['x'])) - 1]),
-        "y": int(str(state.global_env['y'])[6:len(str(state.global_env['y'])) - 1]),
-        "required_gold": int(str(state.global_env['required_gold'])[6:len(str(state.global_env['required_gold'])) - 1]),
-        "required_gem": int(str(state.global_env['required_gem'])[6:len(str(state.global_env['required_gem'])) - 1]),
-        "gold": int(str(state.global_env['gold'])[6:len(str(state.global_env['gold'])) - 1] == "True"),
-        "gem": int(str(state.global_env['gem'])[6:len(str(state.global_env['gem'])) - 1] == "True"),
-        "attacked": int(str(state.global_env['attacked'])[6:len(str(state.global_env['attacked'])) - 1] == "True")
-    }
-    return switch.get(variable_name, None)

@@ -7,6 +7,7 @@ class DecisionTree:
     the decision trees for each of two algorithms (see decision_tree_new.py
     and decision_tree_old.py)
     """
+
     def __init__(self, initial_state, lows, highs, action_names, var_labels):
 
         self.initial_state = initial_state
@@ -194,3 +195,11 @@ class InnerNode(TreeNode):
     def get_vs(self, state):
         # return values of all visits from root to leaf corresponding to state
         return self.visits * self.select_child(state)[0].get_vs(state)
+
+    def select_child(self, state):
+        # selects the child that corresponds to the state
+        feature_label = self.var_labels[self.feature]
+        if state.global_env[feature_label].as_int < self.value:
+            return self.left_child, self.right_child
+        else:
+            return self.right_child, self.left_child

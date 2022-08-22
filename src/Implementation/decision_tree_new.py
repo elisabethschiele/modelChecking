@@ -128,14 +128,6 @@ class InnerNodeNew(InnerNode):
         self.id = id_counter
         id_counter += 1
 
-    def select_child(self, state):
-        # selects the child that corresponds to the state
-        feature_label = self.var_labels[self.feature]
-        if state.global_env[feature_label].as_int < self.value:
-            return self.left_child, self.right_child
-        else:
-            return self.right_child, self.left_child
-
     def update(self, action, old_state, target, alpha, gamma, d):
         # update visit frequency
         self.visits = self.visits * d + (1 - d)
@@ -146,7 +138,6 @@ class InnerNodeNew(InnerNode):
 
     def split_node(self, old_state, L, best_split, left_splits, right_splits):
         feature_label = self.var_labels[self.feature]
-
         if old_state.global_env[feature_label].as_int < self.value:
             self.left_child = self.left_child.split_node(old_state, L, best_split, left_splits, right_splits)
         else:

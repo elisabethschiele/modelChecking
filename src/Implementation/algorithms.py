@@ -8,9 +8,9 @@ import pathlib
 import decision_tree_new
 import decision_tree_old
 
-# change import depending on your model
-from resources_rewards import get_immediate_reward, episode_finished
-# from lake_rewards import get_immediate_reward, episode_finished
+# Important! Change the following import depending on your model
+# from resources_rewards import get_immediate_reward, episode_finished
+from lake_rewards import get_immediate_reward, episode_finished
 
 """
 This is the main file in which the high-level structure of the both algorithms is defined
@@ -38,9 +38,7 @@ def get_lows_highs(file_path):
     with open(file_path, encoding="utf-8") as json_data:
         data = json.load(json_data)
         for key in data["variables"]:
-            # print(key)
             if key["type"] == "bool":
-                # print("detected bool")
                 lows.append(0)
                 highs.append(1)
                 var_labels.append(key["name"])
@@ -79,17 +77,25 @@ def CQI(model_path,
         num_of_episodes=10000,
         num_of_steps=1000000):
     """
-    CQI Algorithm from the new paper.
+    CQI Algorithm from the new paper
     """
 
     initial_state = get_initial_state(model_path)
     lows, highs, var_labels = get_lows_highs(model_path)
 
-    # for this specific model we do not want the variable "success" have an impact on our training
-    lows.pop(0)
-    highs.pop(0)
-    var_labels.pop(0)
+    """
+    Note: some models, like Resource gathering include variables that cannot be accessed via state.global_env
+    with Momba. There are typically the variables that are not relevant for splitting, since they normally  
+    represent some function values (like whether the model is in a state that reached a final goal). We need to 
+    manually exclude them. In case of Resource gathering we exclude the variable "success" with the three following
+    lines. 
+    
+    Important! Comment/adjust them for model used as needed.
+    """
 
+    # lows.pop(0)
+    # highs.pop(0)
+    # var_labels.pop(0)
     action_names = get_actions(model_path)  # all actions
     tree = decision_tree_new.DecisionTreeNew(initial_state, lows, highs, action_names, var_labels)
 
@@ -193,8 +199,6 @@ def evaluate(model_path,
     """
 
     epsilon = 0.05
-    lows = [1, 1, 0, 0, 0, 0, 0]  # array of the lowest values of model variables
-    highs = [5, 5, 5, 3, 1, 1, 1]  # array of the highest values of model variables
 
     iters_per_episode = []
     avg_reward_per_episode = []
@@ -241,7 +245,7 @@ def evaluate(model_path,
     print(f'avg reward per episode: {avg_reward_per_episode}')
     print(f'total leaves per episode: {leaf_count}')
     print(f'total nodes per episode: {node_count}')
-    print(f'tot. leaves/pos. leaves: {tree.get_total_leaves()}/{total_possible_leaves(lows, highs)}')
+    # print(f'tot. leaves/pos. leaves: {tree.get_total_leaves()}/{total_possible_leaves(lows, highs)}')
 
     # collect relevant statistics
     avg_iters_per_episode = sum(iters_per_episode) / len(iters_per_episode)
@@ -343,8 +347,6 @@ def save_full_stats_res_gath(filename, runs, algorithm, model):
     avg_leaf_count = []
     avg_node_count = []
 
-    print(f'min_size: {min_size}')
-
     for i in range(min_size):
         sum_iter = 0
         sum_reward = 0
@@ -406,12 +408,22 @@ def Old_Alg(model_path,
     initial_state = get_initial_state(model_path)
     lows, highs, var_labels = get_lows_highs(model_path)
 
-    # for this specific model we do not want the variable "success" o have an impact on our training
-    lows.pop(0)
-    highs.pop(0)
-    var_labels.pop(0)
+    """
+    Note: some models, like Resource gathering include variables that cannot be accessed via state.global_env
+    with Momba. There are typically the variables that are not relevant for splitting, since they normally  
+    represent some function values (like whether the model is in a state that reached a final goal). We need to 
+    manually exclude them. In case of Resource gathering we exclude the variable "success" with the three following
+    lines. 
 
-    action_names = ["left", "right", "top", "down"]  # all actions
+    Important! Comment/adjust them for model used as needed.
+    """
+
+    # lows.pop(0)
+    # highs.pop(0)
+    # var_labels.pop(0)
+
+    # action_names = ["left", "right", "top", "down"]  # all actions
+    action_names = get_actions(model_path)
     tree = decision_tree_old.DecisionTreeOld(initial_state, lows, highs, action_names, var_labels)
 
     iters_per_episode = []
@@ -539,5 +551,22 @@ part of code at the end of both algorithms' definitions if evaluation is desired
 #     num_of_episodes=300,
 #     num_of_steps = 50000)
 
-# CQI("../Testing/models/lake.jani")
-# Old_Alg("../Testing/models/lake.jani")
+
+"""
+When running the Frozen lake model don't forget to:
+
+1. Change the import of reward appropriately (lines 12-13)
+2. Uncomment the lines:
+    # lows.pop(0)
+    # highs.pop(0)
+    # var_labels.pop(0)
+ in CQI/Old_alg functions
+"""
+
+# CQI("../Testing/models/lake.jani",
+#     num_of_episodes=1000,
+#     num_of_steps=100000)
+
+Old_Alg("../Testing/models/lake.jani",
+    num_of_episodes=1000,
+    num_of_steps=100000)
