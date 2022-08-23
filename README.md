@@ -141,7 +141,7 @@ from lake_rewards import get_immediate_reward, episode_finished
 ```
 
 ### Interpretation of Output
-The output for the two algorithms has the same format. First you see the algoprtihm counting up how many runs thruogh the model are performed:
+The output for the two algorithms has the same format. First you see the algorithm counting up how many runs thruogh the model are performed:
 
     Episode 1
     Episode 2
