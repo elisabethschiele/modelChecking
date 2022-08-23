@@ -99,7 +99,7 @@ The amount of gems and gold to collect is specified in the JANI model and can be
 We are given a grid environment with a start and an end tile. The goal is to navigate from start to finish in as few steps as possible. On arbitrary other tiles there are holes in the ice which should be avoided.\
 The actions are to go east, west, north or south. We can never move outside the given grid though.
 
-We are using the following layout with the coordinates as indicated in the picture. The start is at (0,5) and the goal is to reach (5,0) without stepping on one of the tiles marked dangerous.
+We are using the following layout with the coordinates as indicated in the picture. The start is at (0,5) and the goal is to reach (5,0) without stepping on one of the tiles marked dangerous.\
 <img src="documentation_material/lake.png" alt="drawing" width="200" />
 
 What makes this problem more complicated than others is that there is only one reward when the goal is reached and that there is a high level of randomness.\
