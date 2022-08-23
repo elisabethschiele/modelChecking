@@ -14,7 +14,7 @@ To investigate this we reimplemented two approaches that have been published in 
 2. "Conservative Q-Improvement: Reinforcement Learning for an Interpretable Decision-Tree Policy" by Aaron M. Roth, Nicholay Topin, Pooyan Jamshidi and Manuela Veloso, published in 2019 - *The CQI algorithm*
 
 We applied the algorithms to two different JANI models.
-Our results show that both algorithms almost always learn a near optimal decision tree policy and thus these algorithms can be applied to model checking.
+Our results show that both algorithms almost always learn a near optimal decision tree policy under well-chosen parameters and thus these algorithms can be applied to model checking. We did not observe a big difference in performance of these two approaches.
 
 ### Functionality
 Given a Markov Decision Process modeled with the JANI format, our tool can perform the two algorithms and output a decision tree policy. For a detailed description on how to run it please refer to section [Getting Started](#getting-started).\
