@@ -318,12 +318,12 @@ This function should return a boolean value depending on the state.
 ### Important Classes
 #### DecisionTree
 A DecisionTree has 7 attributes:
-`initial_state` - TODO does this state change after tree initialization? do we even need this?
-`lows` - array of minima of all state variables 
-`highs` - array of maxima of all state variables
-`action_names` - array of names of all possible actions
-`var_labels` - array of names of all state variables
-`splits` - array of all possible splits
+`initial_state` - TODO does this state change after tree initialization? do we even need this?\
+`lows` - array of minima of all state variables\
+`highs` - array of maxima of all state variables\
+`action_names` - array of names of all possible actions\
+`var_labels` - array of names of all state variables\
+`splits` - array of all possible splits\
 `actions_qs` - array of the Q values for each possible action
 
 It is the super class to `DecisionTreeOld` and `DecisionTreeNew`. Functions that both these trees require such as `select_action` or `generate_splits` are implemented here.
