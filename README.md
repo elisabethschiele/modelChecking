@@ -36,7 +36,7 @@ Next, navigate to `src/Testing/Simulations` and run
 This should open a new tab in your default browser and display the notebook.
   
 ## Getting Started
-### Prior Installation Needed
+### Prerequisites
 #### Momba
 [Momba](https://momba.dev/) descibes itself as "a Python framework for dealing with quantitative models centered around the JANI-model interchange format".
 We use it to perform steps within a JANI model and extract information about the current state as well as possible actions.
