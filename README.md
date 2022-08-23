@@ -21,7 +21,7 @@ Given a Markov Decision Process modeled with the JANI format, our tool can perfo
 This Project also contains a Jupyter Notebook with a description of our tests to compare the two, the scripts to replicate them as well as graphs which show the results. For more details please refer to section [Results](#results).
 
 ### Results
-we compared the two algorithms in terms of reward and tree size during and after training. The resulting graphs and their origins are documented inside the jupyter notebook `Simulations_Model_Checking.ipynb`.
+We compared the two algorithms in terms of reward and tree size during and after training. The resulting graphs and their origins are documented inside the jupyter notebook `Simulations_Model_Checking.ipynb`.
 
 To display and run the jupyter notebook you need to install jupyter. You can do so using [pip](https://pip.pypa.io/en/stable/installation/):
 
