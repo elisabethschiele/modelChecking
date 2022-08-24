@@ -37,12 +37,13 @@ Apart from momba, we are also using the following dependencies:
 - [numpy](https://numpy.org/)
 - [graphviz](https://graphviz.org/)
 - [pathlib](https://docs.python.org/3/library/pathlib.html)
-- [json](https://www.json.org/json-de.html)
-- [operator](https://docs.python.org/3/library/operator.html)
 - [scipy](https://scipy.org/)
-- [math](https://docs.python.org/3/library/math.html)
-- [warnings](https://docs.python.org/3/library/warnings.html)
-- [abc](https://docs.python.org/3/library/abc.html)
+
+All of these can be installed using pip:
+
+    $ pip install random numpy graphviz pathlib scipy
+
+We also use the built in modules: [json](https://www.json.org/json-de.html), [operator](https://docs.python.org/3/library/operator.html), [math](https://docs.python.org/3/library/math.html), [warnings](https://docs.python.org/3/library/warnings.html) and [abc](https://docs.python.org/3/library/abc.html).
 
 ### Testing your Setup
 Navigate into the `src/Implementation` folder and run `algorithms.py`.\
@@ -234,6 +235,9 @@ Next, navigate to `src/Testing/Simulations` and run
     $ jupyter notebook Simulations_Model_Checking.ipynb
 
 This should open a new tab in your default browser and display the notebook.
+To run the code within the notebook and plot the graphs you need to install [pandas](https://pandas.pydata.org/) and [matplotlib](https://matplotlib.org/). You can do so using pip:
+
+    $ pip install pandas matplotlib
 
 ## Our Models
 ### Resource Gathering
