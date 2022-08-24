@@ -18,10 +18,10 @@ Our results show that both algorithms almost always learn a near optimal decisio
 
 ### Functionality
 Given a Markov Decision Process modeled with the JANI format, our tool can perform the two algorithms and output a decision tree policy. For a detailed description on how to run it please refer to section [Getting Started](#getting-started).\
-This Project also contains a Jupyter Notebook with a description of our tests to compare the two, the scripts to replicate them as well as graphs which show the results. For more details please refer to section [Results](#results).
+This Project also contains a Jupyter Notebook with a description of our tests to compare the two, the scripts to replicate them as well as plots which show the results. For more details please refer to section [Results](#results).
 
 ### Results
-We compared the two algorithms in terms of reward and tree size during and after training. The resulting graphs and their origins are documented inside the jupyter notebook `Simulations_Model_Checking.ipynb`.
+We compared the two algorithms in terms of immediate reward and tree size during and after training. The resulting graphs and their origins are documented inside the jupyter notebook `Simulations_Model_Checking.ipynb`.
 
 To display and run the jupyter notebook you need to install jupyter. You can do so using [pip](https://pip.pypa.io/en/stable/installation/):
 
@@ -40,14 +40,14 @@ This should open a new tab in your default browser and display the notebook.
 #### Momba
 [Momba](https://momba.dev/) descibes itself as "a Python framework for dealing with quantitative models centered around the JANI-model interchange format".
 We use it to perform steps within a JANI model and extract information about the current state as well as possible actions.
-Momba can be installed using the [Python Package Index](https://pypi.org/):
+Momba can be conviniently installed by running:
 
     $ pip install momba
 
 For further details please refer to the official momba [setup guide](https://momba.dev/#getting-started) or [user guide](https://momba.dev/guide/).
 
 #### Other Requirements
-The Code is written in [Python 3](https://www.python.org/downloads/) and has been tested on Python 3.9.0 and 3.10.0.\
+The Code is written in [Python 3](https://www.python.org/downloads/) and has been tested with Python 3.9.0 and 3.10.0.\
 Apart from momba we are also using the following dependencies:
 - random
 - numpy
@@ -69,11 +69,11 @@ You should see something like this continuously running in your terminal:
     Episode 2
     ...
 
-This means the algorithm has successfully started training. This will take some time as the algorithm will take more than 2000 Episodes to finish.\
+This means the default algorithm run has successfully started. This will take some time as the algorithm will likely need than 2000 Episodes to finish.\
 For the interpretation of the output please refer to section [Interpretation of Output](#interpretation-of-output).
 
 ## Recreating our Tests
-This code was tested on two distinct problems which are modeled as markov decision processes:
+This code was tested on two distinct problems which are modeled as Markov decision processes:
 1. The Resource Gathering problem
 2. The Frozen Lake Problem
 
@@ -166,7 +166,7 @@ The number of leaves that the learned decision tree has should be considerably l
 ## Adapting the Existing Models
 When switching between the two models, you need to change a few things inside `algorithms.py` please refer to [Switching Model](#switching-model) for more information.
 
-Both the resource gathering and frozen lake problem can be adapted to be more complicated or simpler. You can choose to either change the existing JANI model or adapt the prism model and convert it to a new JANI model. For simple alterations we suggest looking into the JANI model while more complicated models are easier to write using the modeling loanguage of your choice and then convert it to the JANI format.
+Both the resource gathering and frozen lake problem can be adapted to be more complicated or simpler. You can choose to either change the existing JANI model or adapt the prism model and convert it to a new JANI model. For simple alterations we suggest looking into the JANI model while more complicated models are easier to write using the modeling language of your choice and then convert it to the JANI format.
 ### Adapting Resource Gathering
 The main modification here is to adapt the number of gold and gem to collect.
 As this is a fairly easy modification, it can be done within the existing JANI model.\
@@ -202,20 +202,16 @@ Search for:
 Change the initial_value and upper_bound of the two constants to adapt the model.\
 The initial value will determine after how many collected pieces the game is stopped while the upper bound it important for the algorithm to determine possible splits in the decision tree, so make sure both are the same.
 
-Changing the position of them tiles or even the size of the field is more complicated and should not be done manually within the JANI file.
-
-The provided prism source model however can be adapted more easily by changing the respective formulas.
-
-After adapting the prism model you have to convert it whcih can be done with the storm converter using the command 
+Changing the position of the tiles or even the size of the field is more complicated and should not be done manually within the JANI file. The provided prism source model however can be adapted more easily by changing the respective formulas. After adapting the prism model you have to convert it, which can be done with the storm converter using the command 
 
     ./storm-conv --prism path/to/recourse-gathering.v2.pm --tojani /destination/path/resource_gathering_adapted.jani --globalvars
 
 More details on how to use storm for this purpose can be found at Using New Models.
 
 ### Adapting Frozen Lake
-The only information that we use from the JANI model is the location on the grid (ie field size, start position and current position).
+The only information that we use from the JANI model is the location on the grid (i.e. field size, start position and current position).
 The information about the dangerous tiles as well as the goal, are only accessed through the rewards.
-As momba doesn't allow access to rewards, we defined those manually in `lake_rewards.py`. You can change them there as described [below](#get_immediate_rewards).
+As Momba doesn't allow access to rewards, we defined those manually in `lake_rewards.py`. You can change them there as described [below](#get_immediate_rewards).
 
 To change the starting position, the size of the field or the level of randomness when taking a step, you can adapt the provided `lake.prism` file and convert it again, as is described in [Adapting Resource Gathering](#adapting-resource-gathering).
 
@@ -261,50 +257,45 @@ For any new model you want to use, you need to implement the functions `get_imme
 We provide these for the Resource Gathering problem as well as the Frozen Lake problem.
 
 To use the algorithms on new models you have to mind a few general restrictions:
-1. The model has to have the possibility to assign rewards. It does not need defined rewards, in fact we will not use existing rewards at all. Instead, you will have to define your own rewards which may either be the ones that a model already has or ones that you come up with yourself. Models which have accepting states can use these as states with rewards as the lake problem proves.
+1. The model has to have the possibility to assign rewards. It does not need defined rewards, in fact, we will not use existing rewards at all. Instead, you will have to define your own rewards which may either be the ones that a model already has or ones that you come up with yourself. Models which have accepting states can use these as states with rewards as the lake problem proves.
 2. The model has to have a finite number of states.
 3. The model has to have a finite number of actions. All actions need to be possible to perform at all times.
 
-Apart from this the model has to be in the JANI format. You can find a list of tools that support conversion to JANI in [the JANI Specification](https://jani-spec.org/) under Tool Support.
-
-If you are using a prism model as the source we recommend using storm within the docker container.
-A guide on how to set it up can be found on the official [storm documentation](https://www.stormchecker.org/documentation/obtain-storm/docker.html) page.
-
-You can then use storm-conv to convert the prism model to a JANI model:
+Apart from this the model has to be in the JANI format. You can find a list of tools that support conversion to JANI in [the JANI Specification](https://jani-spec.org/) under Tool Support. If you are using a prism model as the source we recommend using storm within the docker container. A guide on how to set it up can be found on the official [storm documentation](https://www.stormchecker.org/documentation/obtain-storm/docker.html) page. You can then use storm-conv to convert the prism model to a JANI model:
 
     $ /storm-conv --prism /path/tp/prims/model.pm --tojani destination/path.jani --globalvars
 ### Important Functions
 #### CQI
-This function implements the Conservative Q Improvememnt algorithm as proposed by Roth et.al.
+This function implements the Conservative Q-Improvememnt algorithm as proposed by Roth et.al.
 For information about how the algorithm works please refer to the [paper](https://arxiv.org/abs/1907.01180).
 
-The Conservative Q Improvement function has 9 parameters. Except for `model_path` they are parameters that influence how the decision tree is learned. They have to be changed for every single model for the algorithm to work properly. The parameters are the following:
+The Conservative Q Improvement function has 9 parameters. Except for `model_path`, they are parameters that influence how the decision tree is learned. They have to be changed for every single model for the algorithm to work properly. The parameters are the following:
 
-`model_path` - the path to the model the algorithm is performed on\
-`epsilon` - determines amount of randomness of choosing a random actio or the action with the highest Q value. Default value is 0.5\
-`H_s` - starting threshold for what potential delta_Q is required to trigger a split. Default value is 8\
-`D` - decay for H_s. Default value is 0.9999\
-`gamma` - constant for the Bellman equation. Default value is 0.8\
-`alpha` - constant for the Bellman equation. Default value is 0.1\
-`d` - visit decay for Algorithm 4 and Algorithm 5(as described in paper). Default value is 0.999\
+`model_path`      - the path to the model the algorithm is performed on\
+`epsilon`         - determines amount of randomness of choosing a random actio or the action with the highest Q value. Default value is 0.5\
+`H_s`             - starting threshold for what potential delta_Q is required to trigger a split. Default value is 8\
+`D`               - decay for H_s. Default value is 0.9999\
+`gamma`           - constant for the Bellman equation. Default value is 0.8\
+`alpha`           - constant for the Bellman equation. Default value is 0.1\
+`d`               - visit decay for Algorithm 4 and Algorithm 5(as described in paper). Default value is 0.999\
 `num_of_episodes` - limit of episodes to perform during training. Default value is 10000\
-`num_of_steps` - limit of steps to perform during training. Default value is 1000000.
+`num_of_steps`    - limit of steps to perform during training. Default value is 1000000.
 
 
 #### Old_Alg
-This function imoplements the algorithm proposed by Pyeatt and Howe.
-Since the [paper](https://www.researchgate.net/publication/2406466_Decision_Tree_Function_Approximation_in_Reinforcement_Learning) does not elaborate on a lot of implementation relevant details this algorithm uses a similar structure as the CQI algorithm with a different approach on when and where to split leaf nodes of the decision tree.\
+This function implements the algorithm proposed by Pyeatt and Howe.
+Since the [paper](https://www.researchgate.net/publication/2406466_Decision_Tree_Function_Approximation_in_Reinforcement_Learning) does not elaborate on a lot of implementation relevant details this algorithm uses a similar structure as the CQI algorithm with a different approach on when and where to split leaf nodes of the decision tree.
 
 The function has one compulsory and 7 optional parameters. Except for `model_path` all parameters are relevant for the performance of the algorithm and have to be adjusted to every model(variation) individually.
 
-`model_path` - the path to the model the algorithm is performed on\
-`epsilon` - determines amount of randomness of choosing a random actio or the action with the highest Q value. Default value is 0.5\
-`gamma` - constant for the Bellman equation. Default value is 0.8\
-`alpha` - constant for the Bellman equation. Default value is 0.3\
-`d` - visit decay. Default value is 0.999\
-`hist_min_size` - minimum number of visits before a leaf node can be split. Default value is 3000.\
+`model_path`      - the path to the model the algorithm is performed on\
+`epsilon`         - determines amount of randomness of choosing a random actio or the action with the highest Q value. Default value is 0.5\
+`gamma`           - constant for the Bellman equation. Default value is 0.8\
+`alpha`           - constant for the Bellman equation. Default value is 0.3\
+`d`               - visit decay. Default value is 0.999\
+`hist_min_size`   - minimum number of visits before a leaf node can be split. Default value is 3000.\
 `num_of_episodes` - limit of episodes to perform during training. Default value is 10000\
-`num_of_steps` - limit of steps to perform during training. Default value is 1000000.
+`num_of_steps`    - limit of steps to perform during training. Default value is 1000000.
 
 #### get_immediate_rewards
 This function has to be implemented for every new model. It is provided for the Resource Gathering and Lake problems in their respective `rewards.py` files. The function takes the input parameters`old_state` and `state` which characterizes the last/current state of the model and are of the momba `State` format. (TODO: more specific)\
@@ -317,7 +308,7 @@ This function should return a boolean value depending on the state.
 
 ### Important Classes
 #### DecisionTree
-A DecisionTree has 7 attributes:
+A `DecisionTree` has 7 attributes:
 `initial_state` - TODO does this state change after tree initialization? do we even need this?\
 `lows` - array of minima of all state variables\
 `highs` - array of maxima of all state variables\
@@ -329,11 +320,11 @@ A DecisionTree has 7 attributes:
 It is the super class to `DecisionTreeOld` and `DecisionTreeNew`. Functions that both these trees require such as `select_action` or `generate_splits` are implemented here.
 
 #### TreeNode, LeafNode, InnerNode
-TreeNode is an abstract class to LeafNode and InnerNode.
+`TreeNode` is an abstract class to `LeafNode` and `InnerNode`.
 Similarily to DecisionTree, LeafNode and InnerNode are general classes that combine functionaliy that both algorithms require of the inner and leaf nodes. The relevant functions for this difference are `best_split` and `update`. They implement the key difference in how the decision about when and where to split. Adjustments in other functions are needed to accommodate these differences.
 
 #### DecisionTreeOld, LeafNodeOld, InnerNodeOld
 This classes inherit from the respective general classes. The key difference is that the leaves of type LeafNodeOld in DecisionTreeOld store a visit history called `visits`. This history is required to determine if a split is beneficial.
 
 #### DecisionTreeNew, LeafNodeNew, InnerNodeNew
-This classes inherit from the respective general classes. They do mot have any additional attributes.
+This classes inherit from the respective general classes. They do not have any additional attributes.
