@@ -97,6 +97,7 @@ from lake_rewards import get_immediate_reward, episode_finished
 # highs.pop(0)
 # var_labels.pop(0)
 ```
+Keep in mind that the algorithms need different parameters for each model(variation). The optimal parameters for Resouce Gathering and Lake can be found in Appendix: [Optimal Parameters](#optimal-parameters)
 
 ### Interpretation of Output
 The output for the two algorithms has the same format. First, you see the algorithm counting up how many runs through the model are performed:
@@ -347,3 +348,15 @@ Unfortunately you still have to replace references to constants that are for exa
 Simply search for any references to constants and replace them with the actual number that they represent.\
 For Resource gathering we had to replace `GOLD_TO_COLLECT` and `GEM_TO_COLLECT` twice each.
 
+## Optimal Parameters
+### Resource Gathering Parameters
+CQI:
+TODO
+Old Algorithm:
+TODO
+
+### Lake Parameters
+CQI:
+TODO
+Old Algorithm:
+TODO
