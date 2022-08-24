@@ -43,7 +43,7 @@ All of these can be installed using pip:
 
     $ pip install random numpy graphviz pathlib scipy
 
-We also use the built in modules: [json](https://www.json.org/json-de.html), [operator](https://docs.python.org/3/library/operator.html), [math](https://docs.python.org/3/library/math.html), [warnings](https://docs.python.org/3/library/warnings.html) and [abc](https://docs.python.org/3/library/abc.html).
+We also use the built-in modules: [json](https://www.json.org/json-de.html), [operator](https://docs.python.org/3/library/operator.html), [math](https://docs.python.org/3/library/math.html), [warnings](https://docs.python.org/3/library/warnings.html) and [abc](https://docs.python.org/3/library/abc.html).
 
 ### Testing your Setup
 Navigate into the `src/Implementation` folder and run `algorithms.py`.\
@@ -56,7 +56,7 @@ You should see something like this continuously running in your terminal:
 This means the default algorithm run has successfully started. This will take some time as the algorithm will likely need more than 2000 Episodes to finish.\
 For the interpretation of the output please refer to section [Interpretation of Output](#interpretation-of-output).
 
-## Recreating our Tests
+## Recreating our Experiments
 This code was tested on two distinct problems which are modeled as Markov decision processes:
 1. The Resource Gathering problem
 2. The Frozen Lake Problem
@@ -66,7 +66,7 @@ If you are not familiar with these problems please have a look at Appendix: [Our
 
 ### Running the Algorithm
 To run the algorithms you need to call the functions CQI or Old_Algorithm which are inside the file `src/Implementation/algorithms.py`.\
-Simply navigate to the `Implementation` folder and run `algorithms.py` with python 3. 
+Simply navigate to the `Implementation` folder and run `algorithms.py` with Python 3. 
 The default function call that is executed by this is:
 
     CQI("../Testing/models/resources_parsed_fully.jani")
@@ -121,7 +121,7 @@ The information about training consists of three arrays. The first one is the nu
 The second array shows the average reward per step during a given episode. This number should be low in the beginning and grow over time. As with the number of steps, this will always fluctuate.\
 The last array shows the number of leaves the decision tree has after each episode. This number is non-decreasing which means after every episode the number of leaves is greater or equal to the number of leaves before the episode. During one episode more than one leaf may be created. In the beginning, the increase should be faster than in the end.
 
-If the numbers do not follow the above-described trends, this is an indicator that the algorithm is not working properly. You might want to change the [parameters of the algorithms](#cqi)
+If the numbers do not follow the above-described trends, this is an indicator that the algorithm is not working properly. You want to change the [parameters of the algorithms](#cqi)
 
 At last, the number of possible states for the given model is calculated. This number is the number of leaves that a complete decision tree, which represents each possible state individually, would have.
 The number of leaves that the learned decision tree has should be considerably lower than the number of leaves in the complete tree.
@@ -144,17 +144,17 @@ To use the algorithms on new models you have to mind a few general restrictions:
 Apart from this, the model has to be in the JANI format. You can find a list of tools that support conversion to JANI in [the JANI Specification](https://jani-spec.org/) under Tool Support. If you are using a prism model as the source we recommend using storm within the docker container. A guide on how to set it up can be found on the official [storm documentation](https://www.stormchecker.org/documentation/obtain-storm/docker.html) page. You can then use [storm-conv](https://moves-rwth.github.io/storm-doc/d4/d0d/structstorm_1_1converter_1_1_jani_conversion_options.html) to convert the prism model to a JANI model:
 
     $ /storm-conv --prism /path/tp/prims/model.pm --tojani destination/path.jani --globalvars
-Unfortunately momba can not work with all JANI syntax. If you see errors when running the algorithms with your current model please have a look at Appendix: [Adapting Models to fit Momba Requirements](#adapt-jani-models-to-fit-momba-requirements).\
-You also need to find good parameters for the algorithm to work properly. We recommend doing a manual grid-seach. We provide good parameters for [our models](#our-models) in Appendix: [Our Parameters](#our-parameters)
+Unfortunately, momba can not work with all JANI syntax. If you see errors when running the algorithms with your current model please have a look at Appendix: [Adapting Models to fit Momba Requirements](#adapt-jani-models-to-fit-momba-requirements).\
+You also need to find good parameters for the algorithm to work properly. We recommend doing a manual grid search. We provide good parameters for [our models](#our-models) in Appendix: [Our Parameters](#our-parameters)
 ### Important Functions
-#### CQI
+#### CQI()
 This function implements the Conservative Q-Improvement algorithm as proposed by Roth et.al.
 For information about how the algorithm works please refer to the [paper](https://arxiv.org/abs/1907.01180).
 
 The Conservative Q Improvement function has one compulsory and 8 optional parameters. Except for the compulsory parameter `model_path`, they are parameters that influence how the decision tree is learned. They have to be changed for every single model for the algorithm to work properly. The parameters are the following:
 
 
-parameter name   | description
+Parameter Name   | Description
 ---|---
 `model_path`    | the path to the model the algorithm is performed on
 `epsilon`   | determines the amount of randomness of choosing a random action or the action with the highest Q value. The default value is 0.5
@@ -166,22 +166,22 @@ parameter name   | description
 `num_of_episodes`   | limit of episodes to perform during training. The default value is 10,000
 `num_of_steps`  | limit of steps to perform during training. The default value is 1,000,000
 
-
-#### Old_Alg
+To learn more about the effects of these parameters, please refer to Appendix: [Parameter Effects](#parameter-effects)
+#### Old_Alg()
 This function implements the algorithm proposed by Pyeatt and Howe.
 Since the [paper](https://www.researchgate.net/publication/2406466_Decision_Tree_Function_Approximation_in_Reinforcement_Learning) does not elaborate on a lot of implementation relevant details this algorithm uses a similar structure as the CQI algorithm with a different approach on when and where to split leaf nodes of the decision tree.
 
-The function has one compulsory and 7 optional parameters. Except for  the compulsory parameter `model_path` all parameters are relevant for the performance of the algorithm and have to be adjusted to every model(variation) individually.\
+The function has one compulsory and 7 optional parameters. Except for the compulsory parameter `model_path`, all parameters are relevant for the performance of the algorithm and have to be adjusted to every model(variation) individually.\
 Old_Alg shares 6 of its seven parameters with [CQI](#cqi) For their meanings please refer to the CQI documentation. These parameters are: `model_path`, `epsilon`, `gamma`, `alpha` (has default value 0.3 for Old_Alg), `d`, `num_of_episodes` and `num_of_steps`.
 
 Unique to the old algorithm is `hist_min_size`, which is the minimum number of visits before a leaf node can be split. The default value is 3000.
 
 
-#### get_immediate_rewards
+#### get_immediate_rewards()
 This function has to be implemented for every new model. It is provided for the Resource Gathering and Lake problems in their respective `rewards.py` files. The function takes the input parameters`old_state` and `state` which characterize the last/current state of the model and are of the momba `State` format. (TODO: more specific)\
 The function should return an integer value (positive or negative) depending on the state.
 
-#### episode_finished
+#### episode_finished()
 This function has to be implemented for every new model. It is provided for the Resource Gathering and Lake problems in their respective `rewards.py` files. The function takes the input parameter `state` which characterizes the current state of the model and is of the momba `State` format.\
 This function should return a boolean value depending on the state.
 `True` indicates that the objective of the model is fulfilled and thus the episode is finished.
@@ -189,9 +189,9 @@ This function should return a boolean value depending on the state.
 ### Important Classes
 #### DecisionTree
 A `DecisionTree` has 7 attributes:
-attribute | function
+Attribute | Function
 --- | ---
-`initial_state` | state of the model at creation of treee
+`initial_state` | state of the model at the creation of the tree
 `lows` | an array of minima of all state variables
 `highs` | an array of maxima of all state variables
 `action_names` | an array of names of all possible actions
@@ -213,7 +213,7 @@ These classes inherit from the respective general classes. They do not have any 
 
 ## Future Work
 ### Parameter Grid-Search
-The most important thing to add in the future is an automated grid-search for parameters.
+The most important thing to add in the future is an automated grid search for parameters.
 Currently, the user must determine the optimal parameters by manually searching for them. This can be tedious, and time-consuming and is an important source of potential human error. 
 Using an automated grid search would eliminate the source of human error, thus ensuring that both algorithms may be compared safely as their optimal parameters have been objectively determined.
 
@@ -282,7 +282,7 @@ When choosing an action there is only a 2/3 chance to go where intended. There i
 <img src="documentation_material/lake_chances.png" alt="drawing" width="80" />
 
 ## Adapting the Existing Models
-Both the resource gathering and Frozen Lake problem can be adapted to be more complicated or simpler. You can choose to either change the existing JANI model or adapt the prism model and convert it to a new JANI model. For simple alterations, we suggest looking into the JANI model while more complicated models are easier to write using the modeling language of your choice and then convert it to the JANI format.
+Both the Resource Gathering and the Frozen Lake problem can be adapted to be more complicated or simpler. You can choose to either change the existing JANI model or adapt the prism model and convert it to a new JANI model. For simple alterations, we suggest looking into the JANI model while more complicated models are easier to write using the modeling language of your choice and then convert it to the JANI format.
 ### Adapting Resource Gathering
 The main modification here is to adapt the number of gold and gem to collect.
 As this is a fairly easy modification, it can be done within the existing JANI model.\
@@ -336,26 +336,26 @@ The converted Frozen Lake model does not need any [adaptions to fit momba](#adap
 
 ## Adapt JANI Models to fit Momba Requirements
 Momba is unfortunately not able to work with all JANI models. 
-We found two problems of correct JANI syntax, that momba is not able to parse:
+We found two problems with correct JANI syntax, that momba is not able to parse:
 1. Function calls
 2. References to constants for Variable bounds
 
 ### Replacing Function Calls
 This is the far bigger task of the two and we wrote a script to automate it. 
-To use it on your own model nagovate to `src/Implementation/jani_parsing.py` and change src_filepath and dst_filepath to match your model. After that simply run:
+To use it on your own model navigate to `src/Implementation/jani_parsing.py` and change src_filepath and dst_filepath to match your model. After that simply run:
 
     $ python3 jani_parsing.py
 This will replace all function calls within the JANI model with the explicit function definitions.
 
 ### Replacing Constants
-Unfortunately you still have to replace references to constants that are for example used for variable bounds. As these constants could be used in a variety of contexts and it is unclear in which contexts momba struggles to parse them, it would be hard to guarantee correctness. Therefore this part remains manual.\
+Unfortunately, you still have to replace references to constants that are for example used for variable bounds. As these constants could be used in a variety of contexts and it is unclear in which contexts momba struggles to parse them, it would be hard to guarantee correctness. Therefore this part remains manual.\
 Simply search for any references to constants and replace them with the actual number that they represent.\
-For Resource gathering we had to replace `GOLD_TO_COLLECT` and `GEM_TO_COLLECT` twice each.
+For Resource Gathering we had to replace `GOLD_TO_COLLECT` and `GEM_TO_COLLECT` twice each.
 
 ## Our Parameters
 We tested many combinations of parameters, but the following ones worked better than the others. The models here are the models described in [Our Models](#our-models). RG refers to the Resource Gathering Model and FL to the Frozen Lake problem.
 
-parameter  | CQI for RG  | Old Alg for RG | CQI for FL | Old Alg. for FL
+Parameter  | CQI for RG  | Old Alg for RG | CQI for FL | Old Alg. for FL
 --- | --- | --- | --- | ---
 `epsilon` | 0.5 | 0.5 | 0.5 | 0.5
 `H_s` | 8 | - | 8 | -
@@ -367,18 +367,17 @@ parameter  | CQI for RG  | Old Alg for RG | CQI for FL | Old Alg. for FL
 `num_of_steps` | 1000000 | 1000000 | 100000 | 100000
 `hist_min_size` | - | 3000 | - | 3000
 
-### Affects of the parameters
+### Parameter Effects
 The following table gives the reader the idea of how changing each individual parameter influences the algorithm's performance.
 
 Parameter | Effect
 --- | --- 
-`epsilon` | Decreases the probability of taking a random step 
+`epsilon` | Higher epsilon increases the probability of taking a random step, has to be between 0 and 1
 `H_s` | The higher, the better the overall performance given enough episodes
-`D` | The closer to 1, the better the overall performance given enough episodes
+`D` | The closer to 1, the better the overall performance, given enough episodes
 `gamma` | The closer to 1, the more the exponential moving avg. leans towards new values. Impact varies depending on other parameters
 `alpha` | The closer to 1, the more the exponential moving avg. leans towards new values. Impact varies depending on other parameters
 `d` | The closer to 1, the better the overall performance given enough episodes
 `num_of_episodes` | The higher, the longer the model trains, hence, better avg. reward per episode, but higher amount of tree nodes
 `num_of_steps` | The higher, the longer the model trains, hence, better avg. reward per episode, but higher amount of tree nodes
-`hist_min_size` | The higher, the better the overall performance given enough episodes
-
+`hist_min_size` | The higher, the better the overall performance, given enough episodes
