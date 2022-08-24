@@ -1,7 +1,8 @@
 import json
 
 
-# filepath = "../Testing/models/resources_parsed_fully.jani"
+filepath = "../Testing/models/resources_parsed_fully.jani"
+
 def parse_jani(filepath):
     """
     Replaces all references to globally defined functions with the body of those functions
@@ -46,3 +47,5 @@ def parse_jani(filepath):
                 output.write(line)
             i = i+1
         output.write(lines[len(lines)-1])
+
+parse_jani(filepath)
