@@ -351,7 +351,18 @@ For Resource gathering we had to replace `GOLD_TO_COLLECT` and `GEM_TO_COLLECT` 
 ## Optimal Parameters
 ### Resource Gathering Parameters
 CQI:
-TODO
+parameter | Resource Gathering + CQI | Resource Gathering + Old Alg. | Frozen Lake + CQI | Frozen Lake + Old Alg.
+--- | --- | --- | ---
+`epsilon` | 0.5 | 0.5 | 0.5 | 0.5
+`H_s` | 8 | - | 8 | -
+`D` | 0.9999 | - | 0.9999 | - 
+`gamma` | 0.8 | 0.8 | 0.8 | 0.8
+`alpha` | 0.1 | 0.3 | 0.1 | 0.3
+`d` | 0.999 | 0.999 | 0.999 | 0.999
+`num_of_episodes` | 10000 | 10000 | 10000 | 10000 
+`num_of_steps` | 1000000 | 1000000 | 100000 | 100000
+`hist_min_size` | - | 3000 | - | 3000
+
 Old Algorithm:
 TODO
 
