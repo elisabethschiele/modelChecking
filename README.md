@@ -348,9 +348,9 @@ Unfortunately you still have to replace references to constants that are for exa
 Simply search for any references to constants and replace them with the actual number that they represent.\
 For Resource gathering we had to replace `GOLD_TO_COLLECT` and `GEM_TO_COLLECT` twice each.
 
-## Optimal Parameters
-### Resource Gathering Parameters
-CQI:
+## Parameters that we used
+We tested many combinations of parameters, but the following ones worked better then the others. Note: by Resource Gathering we mean Recourse Gathering with gold=5 and gem=5.
+
 parameter | Resource Gathering + CQI | Resource Gathering + Old Alg. | Frozen Lake + CQI | Frozen Lake + Old Alg.
 --- | --- | --- | ---
 `epsilon` | 0.5 | 0.5 | 0.5 | 0.5
@@ -362,6 +362,11 @@ parameter | Resource Gathering + CQI | Resource Gathering + Old Alg. | Frozen La
 `num_of_episodes` | 10000 | 10000 | 10000 | 10000 
 `num_of_steps` | 1000000 | 1000000 | 100000 | 100000
 `hist_min_size` | - | 3000 | - | 3000
+
+## Optimal Parameters
+### Resource Gathering Parameters
+CQI:
+
 
 Old Algorithm:
 TODO
