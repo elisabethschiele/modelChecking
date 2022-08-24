@@ -32,13 +32,7 @@ For further details please refer to the official momba [setup guide](https://mom
 
 #### Other Requirements
 The Code is written in [Python 3](https://www.python.org/downloads/) and has been tested with Python 3.9.0 and 3.10.0.\
-Apart from momba, we are also using the following dependencies:
-- [random](https://docs.python.org/3/library/random.html)
-- [numpy](https://numpy.org/)
-- [graphviz](https://graphviz.org/)
-- [pathlib](https://docs.python.org/3/library/pathlib.html)
-- [scipy](https://scipy.org/)
-
+Apart from momba, we are also using the following dependencies: [random](https://docs.python.org/3/library/random.html), [numpy](https://numpy.org/), [graphviz](https://graphviz.org/), [pathlib](https://docs.python.org/3/library/pathlib.html) and [scipy](https://scipy.org/).
 All of these can be installed using pip:
 
     $ pip install random numpy graphviz pathlib scipy
@@ -128,11 +122,6 @@ The number of leaves that the learned decision tree has should be considerably l
   
 ## Developer’s Guide
 If you want to adapt, reuse or extend this code, please refer to the following Developer's Guide. We provide a visual overview of the class structure as well as more detailed information about the most important functions and classes. The comments within the code might also help to understand how specific parts of the algorithm work.
-
-### Classes and Files
-This is an overview of the class structure:
-TODO UML class diagram
-
 ### Using New Models
 For any new model you want to use, you need to implement the functions `get_immediate_reward` and `episode_finished`. We recommend creating a new file `model_name_rewards.py` which contains these functions.
 We provide these for the Resource Gathering problem as well as the Frozen Lake problem.\
@@ -144,31 +133,29 @@ To use the algorithms on new models you have to mind a few general restrictions:
 Apart from this, the model has to be in the JANI format. You can find a list of tools that support conversion to JANI in [the JANI Specification](https://jani-spec.org/) under Tool Support. If you are using a prism model as the source we recommend using storm within the docker container. A guide on how to set it up can be found on the official [storm documentation](https://www.stormchecker.org/documentation/obtain-storm/docker.html) page. You can then use [storm-conv](https://moves-rwth.github.io/storm-doc/d4/d0d/structstorm_1_1converter_1_1_jani_conversion_options.html) to convert the prism model to a JANI model:
 
     $ /storm-conv --prism /path/tp/prims/model.pm --tojani destination/path.jani --globalvars
+
+You also need to find good parameters for the algorithm to work properly. We recommend doing a manual grid-seach. We provide good parameters for [our models](#our-models) in Appendix: [Optimal Parameters](#optimal-parameters)
 ### Important Functions
 #### CQI
-This function implements the Conservative Q-Improvement algorithm as proposed by Roth et.al.
+This function implements the Conservative Q-Improvement algorithm as proposed by Roth et.al.\
 For information about how the algorithm works please refer to the [paper](https://arxiv.org/abs/1907.01180).
-
 The Conservative Q Improvement function has one compulsory and 8 optional parameters. Except for the compulsory parameter `model_path`, they are parameters that influence how the decision tree is learned. They have to be changed for every single model for the algorithm to work properly. The parameters are the following:
-
-
 parameter name   | description
 ---|---
 `model_path`    | the path to the model the algorithm is performed on
-`epsilon`   | determines the amount of randomness of choosing a random action or the action with the highest Q value. The default value is 0.5
-`H_s`   | starting threshold for what potential delta_Q is required to trigger a split. The default value is 8
-`D` | decay for H_s. The default value is 0.9999
-`gamma` | constant for the Bellman equation. The default value is 0.8
-`alpha` | constant for the Bellman equation. The default value is 0.1
-`d` | visit decay for Algorithm 4 and Algorithm 5(as described in the paper). The default value is 0.999
-`num_of_episodes`   | limit of episodes to perform during training. The default value is 10,000
-`num_of_steps`  | limit of steps to perform during training. The default value is 1,000,000
+`epsilon`   | determines the amount of randomness of choosing a random action or the action with the highest Q value; the default value is 0.5
+`H_s`   | starting threshold for what potential delta_Q is required to trigger a split; the default value is 8
+`D` | decay for H_s; the default value is 0.9999
+`gamma` | constant for the Bellman equation; the default value is 0.8
+`alpha` | constant for the Bellman equation; the default value is 0.1
+`d` | visit decay for Algorithm 4 and Algorithm 5(as described in the paper); the default value is 0.999
+`num_of_episodes`   | limit of episodes to perform during training; the default value is 10,000
+`num_of_steps`  | limit of steps to perform during training; the default value is 1,000,000
 
 
 #### Old_Alg
 This function implements the algorithm proposed by Pyeatt and Howe.
-Since the [paper](https://www.researchgate.net/publication/2406466_Decision_Tree_Function_Approximation_in_Reinforcement_Learning) does not elaborate on a lot of implementation relevant details this algorithm uses a similar structure as the CQI algorithm with a different approach on when and where to split leaf nodes of the decision tree.
-
+Since the [paper](https://www.researchgate.net/publication/2406466_Decision_Tree_Function_Approximation_in_Reinforcement_Learning) does not elaborate on a lot of implementation relevant details this algorithm uses a similar structure as the CQI algorithm with a different approach on when and where to split leaf nodes of the decision tree.\
 The function has one compulsory and 7 optional parameters. Except for  the compulsory parameter `model_path` all parameters are relevant for the performance of the algorithm and have to be adjusted to every model(variation) individually.\
 Old_Alg shares 6 of its seven parameters with [CQI](#cqi) For their meanings please refer to the CQI documentation. These parameters are: `model_path`, `epsilon`, `gamma`, `alpha` (has default value 0.3 for Old_Alg), `d`, `num_of_episodes` and `num_of_steps`.
 
@@ -176,7 +163,7 @@ Unique to the old algorithm is `hist_min_size`, which is the minimum number of v
 
 
 #### get_immediate_rewards
-This function has to be implemented for every new model. It is provided for the Resource Gathering and Lake problems in their respective `rewards.py` files. The function takes the input parameters`old_state` and `state` which characterize the last/current state of the model and are of the momba `State` format. (TODO: more specific)\
+This function has to be implemented for every new model. It is provided for the Resource Gathering and Lake problems in their respective `rewards.py` files. The function takes the input parameters `old_state` and `state` which characterize the last/current state of the model and are of the momba `State` format. (TODO: more specific)\
 The function should return an integer value (positive or negative) depending on the state.
 
 #### episode_finished
@@ -207,7 +194,7 @@ Similar to DecisionTree, LeafNode and InnerNode are general classes that combine
 These classes inherit from their respective general classes. The key difference is that the leaves of type LeafNodeOld in DecisionTreeOld store a visit history called `visits`. This history is required to determine if a split is beneficial.
 
 #### DecisionTreeNew, LeafNodeNew, InnerNodeNew
-These classes inherit from the respective general classes. They do not have any additional attributes.
+These classes inherit from their respective general classes. They do not have any additional attributes.
 
 ## Future Work
 ### Parameter Grid-Search
