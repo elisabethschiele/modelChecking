@@ -18,23 +18,7 @@ Our results show that both algorithms almost always learn a near-optimal decisio
 
 ### Functionality
 Given a Markov Decision Process modeled with the JANI format, our tool can perform the two algorithms and output a decision tree policy. For a detailed description of how to run it please refer to section [Getting Started](#getting-started).\
-This Project also contains a Jupyter Notebook with a description of our tests to compare the two, the scripts to replicate them as well as plots that show the results. For more details please refer to section [Results](#results).
-
-### Results
-We compared the two algorithms in terms of immediate reward and tree size during and after training. The resulting graphs and their origins are documented inside the jupyter notebook `Simulations_Model_Checking.ipynb` located in the folder `src/Testing/Simulations`.
-
-To display and run the jupyter notebook you need to install jupyter. You can do so using [pip](https://pip.pypa.io/en/stable/installation/):
-
-    $ pip install notebook
-
-For alternative ways to install jupyter notebook please refer to the official [documentation](https://jupyter.org/install).
-
-Next, navigate to `src/Testing/Simulations` and run
-
-    $ jupyter notebook Simulations_Model_Checking.ipynb
-
-This should open a new tab in your default browser and display the notebook.
-  
+This Project also contains a Jupyter Notebook with a description of our tests to compare the two, the scripts to replicate them as well as plots that show the results. For more details please refer to section Appendix: [Results](#results).
 ## Getting Started
 ### Prerequisites
 #### Momba
@@ -77,45 +61,7 @@ This code was tested on two distinct problems which are modeled as Markov decisi
 2. The Frozen Lake Problem
 
 To fully understand the purpose and performance of the algorithms it is important to understand the given problems and their objectives.
-If you are less interested in the "why" and more in the "how" feel free to jump to section [Running the Algorithm](#running-the-algorithm).
-
-### Resource Gathering
-We are given a grid environment with a home tile, a gem tile, a gold tile, and any number of enemy tiles.
-We use the same layout as the original problem that was proposed in [Empirical evaluation methods for multiobjective reinforcement learning algorithms](https://link.springer.com/article/10.1007/s10994-010-5232-5):
-
-
-<div>
-<div style="float: left; padding-right: 10px">
-<img src="documentation_material/resource_gathering.png" alt="resource_gathering" width="200" /> 
-</div>
-</div>
-
-The coordinates start at (1,1) in the bottom left corner and go up to (5,5) in the top left corner.
-The home tile is located at (3,1), gold at (3,5), gem at (5,4) and we are facing two enemies at (3,4) and (4,5).
-
-We start at our home and it is our objective to go to the gold/gem tile to pick up gold/gem and collect it by bringing it back home.
-It is not possible to carry more than one piece of each at the same time, however, it is possible to carry one gold and one gem simultaneously.
-At any given moment we have four possible actions: left, right, up, and down. If executing an action would cause us to leave the grid, the execution of this action has no effect. This means we can choose any action at all times.
-There are enemies which attack the player with some fixed probability if the player is on the enemy tile or one of the four tiles directly adjacent to the enemy tile. 
-
-The amount of gems and gold to collect is specified in the JANI model and can be adapted to make the problem harder or simpler (see Appendix: [Adapting Existing Models](#adapting-existing-models)). We are using a relatively complex setup with 5 gold and 3 gems to collect.
-
-### Frozen Lake Problem
-We are given a grid environment with a start and an end tile. The goal is to navigate from start to finish in as few steps as possible. On arbitrary other tiles, there are holes in the ice that should be avoided.\
-The actions are to go east, west, north, or south. We can never move outside the given grid though.
-
-We are using the following layout with the coordinates as indicated in the picture. The start is at (0,5) and the goal is to reach (5,0) without stepping on one of the tiles marked dangerous.
-
-<div>
-<div style="float: left; padding-right: 10px">
-<img src="documentation_material/lake.png" alt="drawing" width="200" />
-</div>
-</div>
-
-What makes this problem more complicated than others is that there is only one reward when the goal is reached and that there is a high level of randomness.\
-When choosing an action there is only a 2/3 chance to go where intended. There is a 1/6 chance to end up on the tiles at 90° to the sides of the intended action. The illustration below shows this phenomenon:
-
-<img src="documentation_material/lake_chances.png" alt="drawing" width="80" />
+If you are not familiar with these problems please have a look at Appendix: [Our Models](#our-models).
 
 ### Running the Algorithm
 To run the algorithms you need to call the functions CQI or Old_Algorithm which are inside the file `src/Implementation/algorithms.py`.\
@@ -274,6 +220,59 @@ Momba is not able to parse all JANI models so the user has to run our script and
 
 # Appendix
 Here you can find some more information about the project that is not crucial to the documentation.
+## Results
+We compared the two algorithms in terms of immediate reward and tree size during and after training. The resulting graphs and their origins are documented inside the jupyter notebook `Simulations_Model_Checking.ipynb` located in the folder `src/Testing/Simulations`.
+
+To display and run the jupyter notebook you need to install jupyter. You can do so using [pip](https://pip.pypa.io/en/stable/installation/):
+
+    $ pip install notebook
+
+For alternative ways to install jupyter notebook please refer to the official [documentation](https://jupyter.org/install).
+
+Next, navigate to `src/Testing/Simulations` and run
+
+    $ jupyter notebook Simulations_Model_Checking.ipynb
+
+This should open a new tab in your default browser and display the notebook.
+
+## Our Models
+### Resource Gathering
+We are given a grid environment with a home tile, a gem tile, a gold tile, and any number of enemy tiles.
+We use the same layout as the original problem that was proposed in [Empirical evaluation methods for multiobjective reinforcement learning algorithms](https://link.springer.com/article/10.1007/s10994-010-5232-5):
+
+
+<div>
+<div style="float: left; padding-right: 10px">
+<img src="documentation_material/resource_gathering.png" alt="resource_gathering" width="200" /> 
+</div>
+</div>
+
+The coordinates start at (1,1) in the bottom left corner and go up to (5,5) in the top left corner.
+The home tile is located at (3,1), gold at (3,5), gem at (5,4) and we are facing two enemies at (3,4) and (4,5).
+
+We start at our home and it is our objective to go to the gold/gem tile to pick up gold/gem and collect it by bringing it back home.
+It is not possible to carry more than one piece of each at the same time, however, it is possible to carry one gold and one gem simultaneously.
+At any given moment we have four possible actions: left, right, up, and down. If executing an action would cause us to leave the grid, the execution of this action has no effect. This means we can choose any action at all times.
+There are enemies which attack the player with some fixed probability if the player is on the enemy tile or one of the four tiles directly adjacent to the enemy tile. 
+
+The amount of gems and gold to collect is specified in the JANI model and can be adapted to make the problem harder or simpler (see Appendix: [Adapting Existing Models](#adapting-existing-models)). We are using a relatively complex setup with 5 gold and 3 gems to collect.
+
+### Frozen Lake Problem
+We are given a grid environment with a start and an end tile. The goal is to navigate from start to finish in as few steps as possible. On arbitrary other tiles, there are holes in the ice that should be avoided.\
+The actions are to go east, west, north, or south. We can never move outside the given grid though.
+
+We are using the following layout with the coordinates as indicated in the picture. The start is at (0,5) and the goal is to reach (5,0) without stepping on one of the tiles marked dangerous.
+
+<div>
+<div style="float: left; padding-right: 10px">
+<img src="documentation_material/lake.png" alt="drawing" width="200" />
+</div>
+</div>
+
+What makes this problem more complicated than others is that there is only one reward when the goal is reached and that there is a high level of randomness.\
+When choosing an action there is only a 2/3 chance to go where intended. There is a 1/6 chance to end up on the tiles at 90° to the sides of the intended action. The illustration below shows this phenomenon:
+
+<img src="documentation_material/lake_chances.png" alt="drawing" width="80" />
 
 ## Adapting the Existing Models
 Both the resource gathering and frozen lake problem can be adapted to be more complicated or simpler. You can choose to either change the existing JANI model or adapt the prism model and convert it to a new JANI model. For simple alterations, we suggest looking into the JANI model while more complicated models are easier to write using the modeling language of your choice and then convert it to the JANI format.
@@ -340,5 +339,5 @@ This will replace all function calls within the JANI model with the explicit fun
 
 ### Replacing Constants
 Unfortunately you still have to replace references to constants that are used for variable bounds. As variables can have very different definitions it is much easier to do this by hand than to handle all possible syntax for variable definitions. Simply search for any references to constants and replace them with the actual number that they represent.\
-For Resource gathering we had to replace GOLD_TO_COLLECT and GEM_TO_COLLECT twice each.
+For Resource gathering we had to replace `GOLD_TO_COLLECT` and `GEM_TO_COLLECT` twice each.
 

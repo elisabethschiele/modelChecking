@@ -1,9 +1,11 @@
 import json
 
 
-filepath = "../Testing/models/resources_parsed_fully.jani"
 
-def parse_jani(filepath):
+src_path = "../Testing/models/resources_parsed_fully.jani"
+dst_path = "../Testing/models/resources_parsed.jani"
+
+def parse_jani(filepath_raw, filepath_parsed):
     """
     Replaces all references to globally defined functions with the body of those functions
     within JANI models. Momba unfortunately requires this to be able to parse the model.
@@ -12,18 +14,18 @@ def parse_jani(filepath):
     """
     functions = {}
 
-    with open(filepath, encoding="utf-8") as json_data:
+    with open(filepath_raw, encoding="utf-8") as json_data:
         data = json.load(json_data)
 
         for i in range (len(data["functions"])):
             functions.update({data["functions"][i]["name"]: data["functions"][i]["body"]})
 
     lines = []
-    with open(filepath, "r", encoding="utf-8") as jani_raw:
+    with open(filepath_raw, "r", encoding="utf-8") as jani_raw:
         for line in jani_raw:
             lines.append(line)
 
-    with open(filepath, "w", encoding="utf-8") as output:
+    with open(filepath_parsed, "w", encoding="utf-8") as output:
         i = 0
         while i != len(lines) - 1:
             line = lines[i]
@@ -48,4 +50,5 @@ def parse_jani(filepath):
             i = i+1
         output.write(lines[len(lines)-1])
 
-parse_jani(filepath)
+
+parse_jani(src_path, dst_path)
