@@ -134,6 +134,7 @@ Apart from this, the model has to be in the JANI format. You can find a list of 
 
     $ /storm-conv --prism /path/tp/prims/model.pm --tojani destination/path.jani --globalvars
 
+Unfortunately momba can not work with all JANI syntax. If you see errors when running the algorithms with your current model please have a look at Appendix: [Adapting Models to fit Momba Requirements](#adapt-jani-models-to-fit-momba-requirements).\
 You also need to find good parameters for the algorithm to work properly. We recommend doing a manual grid-seach. We provide good parameters for [our models](#our-models) in Appendix: [Our Parameters](#our-parameters)
 ### Important Functions
 #### CQI
@@ -205,7 +206,7 @@ Using an automated grid search would eliminate the source of human error, thus e
 Unfortunately, an extensive grid-search, as was performed for the [CQI paper](https://arxiv.org/abs/1907.01180) for the 8 adjustable parameters of the new plus the 7 of the old algorithm was simply not feasible with the technical limitations for this practical course.
 ### Implementation in Model Checker(s)
 To use these algorithms for future work it would be beneficial to reimplement them as extensions to existing model checkers. Such integration would make the workflow much easier. It would eliminate the need to rely on momba, which is currently the biggest inhibitor to full automation of the process.
-Momba is not able to parse all JANI models so the user has to run our script and then still adapt the model by hand in some cases. It also doesn't allow access to rewards within the JANI model, which is why the user has to specify them manually. Both these steps would be eliminated if we were no longer reliant on momba to access a model's state information by working from within a model checker.
+Momba is not able to parse all JANI models so the user has to [run our script](#replacing-function-calls) and then still [adapt the model by hand](#replacing-constants) in some cases. It also doesn't allow access to rewards within the JANI model, which is why the user has to specify them manually. Both these steps would be eliminated if we were no longer reliant on momba to access a model's state information by working from within a model checker.
 
 # Appendix
 Here you can find some more information about the project that is not crucial to the documentation.
@@ -267,7 +268,7 @@ When choosing an action there is only a 2/3 chance to go where intended. There i
 <img src="documentation_material/lake_chances.png" alt="drawing" width="80" />
 
 ## Adapting the Existing Models
-Both the resource gathering and frozen lake problem can be adapted to be more complicated or simpler. You can choose to either change the existing JANI model or adapt the prism model and convert it to a new JANI model. For simple alterations, we suggest looking into the JANI model while more complicated models are easier to write using the modeling language of your choice and then convert it to the JANI format.
+Both the resource gathering and Frozen Lake problem can be adapted to be more complicated or simpler. You can choose to either change the existing JANI model or adapt the prism model and convert it to a new JANI model. For simple alterations, we suggest looking into the JANI model while more complicated models are easier to write using the modeling language of your choice and then convert it to the JANI format.
 ### Adapting Resource Gathering
 The main modification here is to adapt the number of gold and gem to collect.
 As this is a fairly easy modification, it can be done within the existing JANI model.\
@@ -300,7 +301,7 @@ Search for:
                 "upper-bound": 3
             }
         }
-Change the `initial_value` and `upper_bound` of the two constants to adapt the model.
+Change the `initial-value` and `upper-bound` of the two constants to adapt the model.
 The initial value will determine after how many collected pieces the game is stopped while the upper bound is important for the algorithm to determine possible splits in the decision tree, so make sure both are the same.\
 Changing the position of the tiles or even the size of the field is more complicated and should not be done manually within the JANI file.
 The provided prism source model however can be adapted more easily by changing the respective formulas.
@@ -308,14 +309,16 @@ After adopting the prism model you have to convert it which can be done with the
 
     ./storm-conv --prism path/to/recourse-gathering.v2.pm --tojani /destination/path/resource_gathering_adapted.jani --globalvars
 
+You will now need to [adapt your model to fit mombas requirements](#adapt-jani-models-to-fit-momba-requirements).
 More details on how to use storm for this purpose can be found at [Using New Models](#using-new-models).
 
 ### Adapting Frozen Lake
 The only information that we use from the JANI model is the location on the grid (ie field size, start position, and current position).
 The information about the dangerous tiles as well as the goal is only accessed through the rewards.
-As momba doesn't allow access to rewards, we defined those manually in `lake_rewards.py`. You can change them there as described [get_immediate_rewards](#get_immediate_rewards).
+As momba doesn't allow access to rewards, we defined those manually in `lake_rewards.py`. You can change them there as described in section [get_immediate_rewards](#get_immediate_rewards).
 
-To change the starting position, the size of the field, or the level of randomness when taking a step, you can adapt the provided `lake.prism` file and convert it again, as is described in [Adapting Resource Gathering](#adapting-resource-gathering).
+To change the starting position, the size of the field, or the level of randomness when taking a step, you can adapt the provided `lake.prism` file and convert it again, as is described in [Adapting Resource Gathering](#adapting-resource-gathering).\ 
+The converted Frozen Lake model does not need any [adaptions to fit momba](#adapt-jani-models-to-fit-momba-requirements).
 
 ## Adapt JANI Models to fit Momba Requirements
 Momba is unfortunately not able to work with all JANI models. 
@@ -336,9 +339,9 @@ Simply search for any references to constants and replace them with the actual n
 For Resource gathering we had to replace `GOLD_TO_COLLECT` and `GEM_TO_COLLECT` twice each.
 
 ## Our Parameters
-We tested many combinations of parameters, but the following ones worked better than the others. The models here are the mdoels described in [Our Models](#our-models)
+We tested many combinations of parameters, but the following ones worked better than the others. The models here are the models described in [Our Models](#our-models). RG refers to the Resource Gathering Model and FL to the Frozen Lake problem.
 
-parameter  | Resource Gathering + CQI  | Resource Gathering + Old Alg. | Frozen Lake + CQI | Frozen Lake + Old Alg.
+parameter  | CQI for RG  | Old Alg for RG | CQI for FL | Old Alg. for FL
 --- | --- | --- | --- | ---
 `epsilon` | 0.5 | 0.5 | 0.5 | 0.5
 `H_s` | 8 | - | 8 | -
