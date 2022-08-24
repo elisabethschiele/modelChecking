@@ -97,7 +97,7 @@ from lake_rewards import get_immediate_reward, episode_finished
 # highs.pop(0)
 # var_labels.pop(0)
 ```
-Keep in mind that the algorithms need different parameters for each model(variation). The optimal parameters for Resouce Gathering and Lake can be found in Appendix: [Optimal Parameters](#optimal-parameters)
+Keep in mind that the algorithms need different parameters for each model(variation). The optimal parameters for Resouce Gathering and Lake can be found in Appendix: [Our Parameters](#our-parameters)
 
 ### Interpretation of Output
 The output for the two algorithms has the same format. First, you see the algorithm counting up how many runs through the model are performed:
@@ -262,7 +262,7 @@ It is not possible to carry more than one piece of each at the same time, howeve
 At any given moment we have four possible actions: left, right, up, and down. If executing an action would cause us to leave the grid, the execution of this action has no effect. This means we can choose any action at all times.
 There are enemies which attack the player with some fixed probability if the player is on the enemy tile or one of the four tiles directly adjacent to the enemy tile. 
 
-The amount of gems and gold to collect is specified in the JANI model and can be adapted to make the problem harder or simpler (see Appendix: [Adapting Existing Models](#adapting-existing-models)). We are using a relatively complex setup with 5 gold and 3 gems to collect.
+The amount of gems and gold to collect is specified in the JANI model and can be adapted to make the problem harder or simpler (see Appendix: [Adapting the Existing Models](#adapting-the-existing-models)). We are using a relatively complex setup with 5 gold and 3 gems to collect.
 
 ### Frozen Lake Problem
 We are given a grid environment with a start and an end tile. The goal is to navigate from start to finish in as few steps as possible. On arbitrary other tiles, there are holes in the ice that should be avoided.\
@@ -329,7 +329,7 @@ More details on how to use storm for this purpose can be found at [Using New Mod
 ### Adapting Frozen Lake
 The only information that we use from the JANI model is the location on the grid (ie field size, start position, and current position).
 The information about the dangerous tiles as well as the goal is only accessed through the rewards.
-As momba doesn't allow access to rewards, we defined those manually in `lake_rewards.py`. You can change them there as described in section [get_immediate_rewards](#get_immediate_rewards).
+As momba doesn't allow access to rewards, we defined those manually in `lake_rewards.py`. You can change them there as described in section [get_immediate_rewards](#get_immediate_rewards()).
 
 To change the starting position, the size of the field, or the level of randomness when taking a step, you can adapt the provided `lake.prism` file and convert it again, as is described in [Adapting Resource Gathering](#adapting-resource-gathering).\ 
 The converted Frozen Lake model does not need any [adaptions to fit momba](#adapt-jani-models-to-fit-momba-requirements).
