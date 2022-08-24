@@ -13,10 +13,10 @@ from resources_rewards import get_immediate_reward, episode_finished
 # from lake_rewards import get_immediate_reward, episode_finished
 
 """
-This is the main file in which the high-level structure of the both algorithms is defined
-and all the simulations are performed.
-This file performs all tests on the resources_parsed_fully.jani file
-To change the amount of gold and gems to collect change the model variables and their bounds within the JANI file
+This is the main file in which the high-level structure of the both algorithms is defined and all 
+the simulations are performed. This file performs all tests on the resources_parsed_fully.jani file
+To change the amount of gold and gems to collect change the model variables and their bounds within 
+the resources_parsed_fully.jani file
 """
 
 
@@ -175,15 +175,16 @@ def CQI(model_path,
     lc_main = leaf_count
     nc_main = node_count
 
-    # uncomment for testing - evaluation on additional k steps without changing the learned tree further
-    # it, rew, lc, nc = evaluate(model_path, tree, initial_state, D, gamma, alpha, d, num_of_episodes, num_of_steps)
+    # uncomment for testing with save_full_stats() function - evaluation on additional k steps without changing the
+    # learned tree further it, rew, lc, nc = evaluate(model_path, tree, initial_state, D, gamma, alpha, d,
+    # num_of_episodes, num_of_steps)
 
     # reinitialize global variables
     tree.reinit_nodes()
     tree.reinit_leaves()
     tree.reinit_ids()
 
-    # uncomment for testing
+    # uncomment for testing with save_full_stats() function
     return it_main, rew_main, lc_main, nc_main  # , it, rew, lc, nc
 
 
@@ -196,7 +197,7 @@ def evaluate(model_path,
              ):
     """
     The function runs :param num_of_steps steps without performing any
-    updates on the tree for evaluation purposes. Used for testing.
+    updates on the tree for evaluation purposes. Used for testing with save_full_stats() function.
     """
 
     epsilon = 0.05
@@ -289,7 +290,7 @@ def total_possible_leaves(lows, highs):
     return total
 
 
-def hs_sim_res_gath(filename, algorithm, model):
+def hs_sim(filename, algorithm, model):
     """
     Simulation for how different splitting threshold affect the best achieved rewards and tree size.
     """
@@ -303,7 +304,7 @@ def hs_sim_res_gath(filename, algorithm, model):
     f.close()
 
 
-def save_full_stats_res_gath(filename, runs, algorithm, model):
+def save_full_stats(filename, runs, algorithm, model):
     """
     Simulation for determining how the avg. reward per episode and the tree size change overtime.
     We perform 10 runs of the algorithm and save the average values for each episode. We throw away
@@ -423,7 +424,6 @@ def Old_Alg(model_path,
     highs.pop(0)
     var_labels.pop(0)
 
-    # action_names = ["left", "right", "top", "down"]  # all actions
     action_names = get_actions(model_path)
     tree = decision_tree_old.DecisionTreeOld(initial_state, lows, highs, action_names, var_labels)
 
@@ -486,7 +486,7 @@ def Old_Alg(model_path,
     lc_main = leaf_count
     nc_main = node_count
 
-    # uncomment for testing
+    # uncomment for testing with save_full_stats() function
     # it, rew, lc, nc = evaluate(model_path, tree, initial_state, D, gamma, alpha, d, num_of_episodes, num_of_steps)
 
     # reinitialize global variables
@@ -494,7 +494,7 @@ def Old_Alg(model_path,
     tree.reinit_leaves()
     tree.reinit_ids()
 
-    # uncomment for testing
+    # uncomment for testing with save_full_stats() function
     return it_main, rew_main, lc_main, nc_main  # , it, rew, lc, nc
 
 
@@ -527,11 +527,12 @@ part of code at the end of both algorithms' definitions if evaluation is desired
 CQI("../Testing/models/resources_parsed_fully.jani")
 # Old_Alg("../Testing/models/resources_parsed_fully.jani")
 
-# save_full_stats_res_gath("../testing/Simulations/Sim_new_1000000steps.txt", 10, CQI,
-# "../Testing/models/resources_parsed_fully.jani") save_full_stats_res_gath(
+# save_full_stats("../testing/Simulations/Sim_new_1000000steps.txt", 10, CQI,
+# "../Testing/models/resources_parsed_fully.jani")
+# save_full_stats(
 # "../testing/Simulations/Sim_old_1000000steps.txt", 10, Old_Alg, "../Testing/models/resources_parsed_fully.jani")
 
-# hs_sim_res_gath("../testing/Simulations/hs_stats.txt", CQI, "../Testing/models/resources_parsed_fully.jani")
+# hs_sim("../testing/Simulations/hs_stats.txt", CQI, "../Testing/models/resources_parsed_fully.jani")
 
 # CQI("../Testing/models/resources_parsed_fully.jani",
 #     epsilon=0.5,

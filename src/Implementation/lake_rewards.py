@@ -17,6 +17,7 @@ def get_immediate_reward(old_state, state):
 
 
 def get_value(state, variable_name):
+    # Function is not relevant anymore, but might be useful for further development.
     # returns integer value of variable_name
     switch = {
         "r": int(str(state.global_env['r'])[6:len(str(state.global_env['r'])) - 1]),

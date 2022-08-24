@@ -1,12 +1,11 @@
 import json
 
 
-# filepath =
 def parse_jani(filepath_raw, filepath_parsed):
     """
     Replaces all references to globally defined functions with the body of those functions
     within JANI models. Momba unfortunately requires this to be able to parse the model.
-    Was tested on (and used for) resource gathering; frozen lake problem did not require
+    Was tested on (and used for) Resource gathering; Frozen lake problem did not require
     this type of adaption.
     """
     functions = {}

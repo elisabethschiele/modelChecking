@@ -31,6 +31,7 @@ def episode_finished(state):
 
 def get_value(state, variable_name):
     """
+    Function is not relevant anymore, but might be useful for further development.
     Returns integer value of :param variable_name of state :param state.
     """
     switch = {

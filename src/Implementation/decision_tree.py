@@ -3,7 +3,7 @@ from abc import abstractmethod
 
 class DecisionTree:
     """
-    This is the generic tree class that includes functionality common for
+    This is the parent tree class that includes functionality common for
     the decision trees for each of two algorithms (see decision_tree_new.py
     and decision_tree_old.py)
     """
@@ -119,7 +119,7 @@ class TreeNode:
 
 
 class LeafNode(TreeNode):
-    # generic leaf node
+    # general leaf node
     def __init__(self, actions_qs, visits, splits, var_labels):
         self.actions_qs = actions_qs
         self.visits = visits
@@ -154,7 +154,7 @@ class LeafNode(TreeNode):
 
 
 class InnerNode(TreeNode):
-    # "branching node" in the paper, once again, generic: each of the algorthims
+    # "branching node" in the paper, once again, general: each of the algorithms
     # uses an extension of this class
 
     def __init__(self, feature, value, left_child, right_child, visits, var_labels):
