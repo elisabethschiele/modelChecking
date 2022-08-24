@@ -91,7 +91,7 @@ from lake_rewards import get_immediate_reward, episode_finished
 # highs.pop(0)
 # var_labels.pop(0)
 ```
-Keep in mind that the algorithms need different parameters for each model(variation). The optimal parameters for Resouce Gathering and Lake can be found in Appendix: [Optimal Parameters](#optimal-parameters)
+Keep in mind that the algorithms need different parameters for each model(variation). The optimal parameters for Resouce Gathering and Lake can be found in Appendix: [Our Parameters](#our-parameters)
 
 ### Interpretation of Output
 The output for the two algorithms has the same format. First, you see the algorithm counting up how many runs through the model are performed:
@@ -134,7 +134,7 @@ Apart from this, the model has to be in the JANI format. You can find a list of 
 
     $ /storm-conv --prism /path/tp/prims/model.pm --tojani destination/path.jani --globalvars
 
-You also need to find good parameters for the algorithm to work properly. We recommend doing a manual grid-seach. We provide good parameters for [our models](#our-models) in Appendix: [Optimal Parameters](#optimal-parameters)
+You also need to find good parameters for the algorithm to work properly. We recommend doing a manual grid-seach. We provide good parameters for [our models](#our-models) in Appendix: [Our Parameters](#our-parameters)
 ### Important Functions
 #### CQI
 This function implements the Conservative Q-Improvement algorithm as proposed by Roth et.al.\
@@ -335,11 +335,11 @@ Unfortunately you still have to replace references to constants that are for exa
 Simply search for any references to constants and replace them with the actual number that they represent.\
 For Resource gathering we had to replace `GOLD_TO_COLLECT` and `GEM_TO_COLLECT` twice each.
 
-## Parameters that we used
-We tested many combinations of parameters, but the following ones worked better then the others. Note: by Resource Gathering we mean Recourse Gathering with gold=5 and gem=5.
+## Our Parameters
+We tested many combinations of parameters, but the following ones worked better than the others. The models here are the mdoels described in [Our Models](#our-models)
 
-parameter | Resource Gathering + CQI | Resource Gathering + Old Alg. | Frozen Lake + CQI | Frozen Lake + Old Alg.
---- | --- | --- | ---
+parameter  | Resource Gathering + CQI  | Resource Gathering + Old Alg. | Frozen Lake + CQI | Frozen Lake + Old Alg.
+--- | --- | --- | --- | ---
 `epsilon` | 0.5 | 0.5 | 0.5 | 0.5
 `H_s` | 8 | - | 8 | -
 `D` | 0.9999 | - | 0.9999 | - 
@@ -349,17 +349,3 @@ parameter | Resource Gathering + CQI | Resource Gathering + Old Alg. | Frozen La
 `num_of_episodes` | 10000 | 10000 | 10000 | 10000 
 `num_of_steps` | 1000000 | 1000000 | 100000 | 100000
 `hist_min_size` | - | 3000 | - | 3000
-
-## Optimal Parameters
-### Resource Gathering Parameters
-CQI:
-
-
-Old Algorithm:
-TODO
-
-### Lake Parameters
-CQI:
-TODO
-Old Algorithm:
-TODO
