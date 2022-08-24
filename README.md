@@ -44,7 +44,7 @@ Apart from momba, we are also using the following dependencies:
 - [warnings](https://docs.python.org/3/library/warnings.html)
 - [abc](https://docs.python.org/3/library/abc.html)
 
-### Testing your setup
+### Testing your Setup
 Navigate into the `src/Implementation` folder and run `algorithms.py`.\
 You should see something like this continuously running in your terminal:
 
@@ -124,7 +124,7 @@ If the numbers do not follow the above-described trends, this is an indicator th
 At last, the number of possible states for the given model is calculated. This number is the number of leaves that a complete decision tree, which represents each possible state individually, would have.
 The number of leaves that the learned decision tree has should be considerably lower than the number of leaves in the complete tree.
   
-## Developer’s guide
+## Developer’s Guide
 If you want to adapt, reuse or extend this code, please refer to the following Developer's Guide. We provide a visual overview of the class structure as well as more detailed information about the most important functions and classes. The comments within the code might also help to understand how specific parts of the algorithm work.
 
 ### Classes and Files
@@ -334,10 +334,12 @@ We found two problems of correct JANI syntax, that momba is not able to parse:
 ### Replacing Function Calls
 This is the far bigger task of the two and we wrote a script to automate it. 
 To use it on your own model nagovate to `src/Implementation/jani_parsing.py` and change src_filepath and dst_filepath to match your model. After that simply run:
+
     $ python3 jani_parsing.py
 This will replace all function calls within the JANI model with the explicit function definitions.
 
 ### Replacing Constants
-Unfortunately you still have to replace references to constants that are used for variable bounds. As variables can have very different definitions it is much easier to do this by hand than to handle all possible syntax for variable definitions. Simply search for any references to constants and replace them with the actual number that they represent.\
+Unfortunately you still have to replace references to constants that are for example used for variable bounds. As these constants could be used in a variety of contexts and it is unclear in which contexts momba struggles to parse them, it would be hard to guarantee correctness. Therefore this part remains manual.\
+Simply search for any references to constants and replace them with the actual number that they represent.\
 For Resource gathering we had to replace `GOLD_TO_COLLECT` and `GEM_TO_COLLECT` twice each.
 
